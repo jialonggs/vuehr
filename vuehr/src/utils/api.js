@@ -18,6 +18,9 @@ axios.interceptors.response.use(data=> {
     Message.error({message: '服务器被吃了⊙﹏⊙∥'});
   } else if (err.response.status == 403) {
     Message.error({message: '权限不足,请联系管理员!'});
+  } else if (err.response.status == 401) {
+    Message.error({message: '登录失效,请重新登录!'});
+    this.$router.push('/index.html/#/');
   }else {
     Message.error({message: '未知错误!'});
   }
@@ -43,6 +46,17 @@ export const postRequest = (url, params) => {
     }
   });
 }
+export const jsonPostRequest = (url, params) => {
+  return axios({
+    method: 'post',
+    url: `${base}${url}`,
+    data: params,
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
+    }
+  });
+}
+
 export const uploadFileRequest = (url, params) => {
   return axios({
     method: 'post',

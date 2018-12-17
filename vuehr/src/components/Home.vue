@@ -2,7 +2,7 @@
   <div>
     <el-container class="home-container">
       <el-header class="home-header">
-        <span class="home_title">微人事</span>
+        <span class="home_title">嘉龙生产管理系统</span>
         <div style="display: flex;align-items: center;margin-right: 7px">
           <el-badge style="margin-right: 30px" :is-dot="this.$store.state.nfDot">
             <i class="fa fa-bell-o" @click="goChat" style="cursor: pointer"></i>
@@ -14,8 +14,8 @@
             style="width: 40px;height: 40px;margin-right: 5px;margin-left: 5px;border-radius: 40px"/></i>
   </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>个人中心</el-dropdown-item>
-              <el-dropdown-item>设置</el-dropdown-item>
+              <el-dropdown-item command="userInfo">个人中心</el-dropdown-item>
+              <!-- <el-dropdown-item>设置</el-dropdown-item> -->
               <el-dropdown-item command="logout" divided>注销</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -44,10 +44,10 @@
         </el-aside>
         <el-container>
           <el-main>
-            <el-breadcrumb separator-class="el-icon-arrow-right">
+            <!-- <el-breadcrumb separator-class="el-icon-arrow-right">
               <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
               <el-breadcrumb-item v-text="this.$router.currentRoute.name"></el-breadcrumb-item>
-            </el-breadcrumb>
+            </el-breadcrumb> -->
             <keep-alive>
               <router-view v-if="this.$route.meta.keepAlive"></router-view>
             </keep-alive>
@@ -110,6 +110,9 @@
               message: '取消'
             });
           });
+        }
+        if(cmd = 'userInfo'){
+          _this.$router.push({path: '/userInfo'});
         }
       }
     },

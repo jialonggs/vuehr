@@ -16,11 +16,11 @@
           </el-input>
           <el-button type="primary" size="mini" style="margin-left: 5px" icon="el-icon-search" @click="searchEmp">搜索
           </el-button>
-          <el-button slot="reference" type="primary" size="mini" style="margin-left: 5px"
+          <!-- <el-button slot="reference" type="primary" size="mini" style="margin-left: 5px"
                      @click="showAdvanceSearchView"><i
             class="fa fa-lg" v-bind:class="[advanceSearchViewVisible ? faangledoubleup:faangledoubledown]"
             style="margin-right: 5px"></i>高级搜索
-          </el-button>
+          </el-button> -->
         </div>
         <div style="margin-left: 5px;margin-right: 20px;display: inline">
           <el-upload
@@ -85,12 +85,12 @@
                 </el-col>
                 <el-col :span="4">
                   职称:
-                  <el-select v-model="emp.jobLevelId" style="width: 130px" size="mini" placeholder="请选择职称">
+                  <el-select v-model="emp.jobLevelName" style="width: 130px" size="mini" placeholder="请选择职称">
                     <el-option
                       v-for="item in joblevels"
                       :key="item.id"
                       :label="item.name"
-                      :value="item.id">
+                      :value="item.Name">
                     </el-option>
                   </el-select>
                 </el-col>
@@ -282,9 +282,9 @@
                 <el-button @click="showEditEmpView(scope.row)" style="padding: 3px 4px 3px 4px;margin: 2px"
                            size="mini">编辑
                 </el-button>
-                <el-button style="padding: 3px 4px 3px 4px;margin: 2px" type="primary"
+                <!-- <el-button style="padding: 3px 4px 3px 4px;margin: 2px" type="primary"
                            size="mini">查看高级资料
-                </el-button>
+                </el-button> -->
                 <el-button type="danger" style="padding: 3px 4px 3px 4px;margin: 2px" size="mini"
                            @click="deleteEmp(scope.row)">删除
                 </el-button>
@@ -295,14 +295,18 @@
             <el-button type="danger" size="mini" v-if="emps.length>0" :disabled="multipleSelection.length==0"
                        @click="deleteManyEmps">批量删除
             </el-button>
-            <el-pagination
+            <!-- <el-pagination
               background
               :page-size="10"
               :current-page="currentPage"
               @current-change="currentChange"
               layout="prev, pager, next"
               :total="totalCount">
-            </el-pagination>
+            </el-pagination> -->
+            <div class="block" style="float:right;margin-top:15px;">
+              <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 30, 80, 100]" :page-size="pagesize" layout="total,sizes, prev, pager, next, jumper" :total="totalnum">
+              </el-pagination>
+            </div>
           </div>
         </div>
       </el-main>
@@ -405,16 +409,11 @@
           <el-row>
             <el-col :span="6">
               <div>
-                <el-form-item label="职位:" prop="posId">
-                  <el-select v-model="emp.posId" style="width: 150px" size="mini" placeholder="请选择职位">
-                    <el-option
-                      v-for="item in positions"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id">
-                    </el-option>
-                  </el-select>
+                <el-form-item label="电话号码:" prop="phone">
+                  <el-input prefix-icon="el-icon-phone" v-model="emp.phone" size="mini" style="width: 200px"
+                            placeholder="电话号码..."></el-input>
                 </el-form-item>
+
               </div>
             </el-col>
             <el-col :span="5">
@@ -451,9 +450,15 @@
             </el-col>
             <el-col :span="7">
               <div>
-                <el-form-item label="电话号码:" prop="phone">
-                  <el-input prefix-icon="el-icon-phone" v-model="emp.phone" size="mini" style="width: 200px"
-                            placeholder="电话号码..."></el-input>
+                <el-form-item label="职位:" prop="posId">
+                  <el-select v-model="emp.posId" style="width: 150px" size="mini" placeholder="请选择职位">
+                    <el-option
+                      v-for="item in positions"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.posId">
+                    </el-option>
+                  </el-select>
                 </el-form-item>
               </div>
             </el-col>
@@ -470,12 +475,12 @@
             <el-col :span="5">
               <div>
                 <el-form-item label="学历:" prop="tiptopDegree">
-                  <el-select v-model="emp.tiptopDegree" style="width: 120px" size="mini" placeholder="最高学历">
+                  <el-select v-model="emp.tiptopDegreeId" style="width: 120px" size="mini" placeholder="最高学历">
                     <el-option
                       v-for="item in degrees"
                       :key="item.id"
                       :label="item.name"
-                      :value="item.name">
+                      :value="item.id">
                     </el-option>
                   </el-select>
                 </el-form-item>
@@ -600,6 +605,9 @@
   export default {
     data() {
       return {
+        currentPage: 1,
+        totalnum: 0,
+        pagesize: 10,
         emps: [],
         keywords: '',
         fileUploadBtnText: '导入数据',
@@ -614,7 +622,6 @@
         positions: [],
         joblevels: [],
         totalCount: -1,
-        currentPage: 1,
         degrees: [{id: 4, name: '大专'}, {id: 5, name: '本科'}, {id: 6, name: '硕士'}, {id: 7, name: '博士'}, {
           id: 3,
           name: '高中'
@@ -648,6 +655,7 @@
           posId: '',
           engageForm: '',
           tiptopDegree: '',
+          tiptopDegreeName:'',
           specialty: '',
           school: '',
           beginDate: '',
@@ -662,10 +670,10 @@
         },
         rules: {
           name: [{required: true, message: '必填:姓名', trigger: 'blur'}],
-          gender: [{required: true, message: '必填:性别', trigger: 'blur'}],
-          birthday: [{required: true, message: '必填:出生日期', trigger: 'blur'}],
+          gender: [{required: false, message: '必填:性别', trigger: 'blur'}],
+          birthday: [{required: false, message: '必填:出生日期', trigger: 'blur'}],
           idCard: [{
-            required: true,
+            required: false,
             message: '必填:身份证号码',
             trigger: 'blur'
           }, {
@@ -673,30 +681,30 @@
             message: '身份证号码格式不正确',
             trigger: 'blur'
           }],
-          wedlock: [{required: true, message: '必填:婚姻状况', trigger: 'blur'}],
-          nationId: [{required: true, message: '必填:民族', trigger: 'change'}],
-          nativePlace: [{required: true, message: '必填:籍贯', trigger: 'blur'}],
-          politicId: [{required: true, message: '必填:政治面貌', trigger: 'blur'}],
-          email: [{required: true, message: '必填:电子邮箱', trigger: 'blur'}, {
+          wedlock: [{required: false, message: '必填:婚姻状况', trigger: 'blur'}],
+          nationId: [{required: false, message: '必填:民族', trigger: 'change'}],
+          nativePlace: [{required: false, message: '必填:籍贯', trigger: 'blur'}],
+          politicId: [{required: false, message: '必填:政治面貌', trigger: 'blur'}],
+          email: [{required: false, message: '必填:电子邮箱', trigger: 'blur'}, {
             type: 'email',
             message: '邮箱格式不正确',
             trigger: 'blur'
           }],
           phone: [{required: true, message: '必填:电话号码', trigger: 'blur'}],
-          address: [{required: true, message: '必填:联系地址', trigger: 'blur'}],
-          departmentId: [{required: true, message: '必填:部门', trigger: 'change'}],
-          jobLevelId: [{required: true, message: '必填:职称', trigger: 'change'}],
-          posId: [{required: true, message: '必填:职位', trigger: 'change'}],
-          engageForm: [{required: true, message: '必填:聘用形式', trigger: 'blur'}],
-          tiptopDegree: [{required: true, message: '必填:最高学历', trigger: 'change'}],
-          specialty: [{required: true, message: '必填:专业', trigger: 'blur'}],
+          address: [{required: false, message: '必填:联系地址', trigger: 'blur'}],
+          departmentId: [{required: false, message: '必填:部门', trigger: 'change'}],
+          jobLevelId: [{required: false, message: '必填:职称', trigger: 'change'}],
+          posId: [{required: false, message: '必填:职位', trigger: 'change'}],
+          engageForm: [{required: false, message: '必填:聘用形式', trigger: 'blur'}],
+          tiptopDegree: [{required: false, message: '必填:最高学历', trigger: 'change'}],
+          specialty: [{required: false, message: '必填:专业', trigger: 'blur'}],
           workID: [{required: true, message: '必填:工号', trigger: 'blur'}],
-          school: [{required: true, message: '必填:毕业院校', trigger: 'blur'}],
-          beginDate: [{required: true, message: '必填:入职日期', trigger: 'blur'}],
-          conversionTime: [{required: true, message: '必填:转正日期', trigger: 'blur'}],
-          beginContract: [{required: true, message: '必填:合同起始日期', trigger: 'blur'}],
-          endContract: [{required: true, message: '必填:合同终止日期', trigger: 'blur'}],
-          workAge: [{required: true, message: '必填:工龄', trigger: 'blur'}]
+          school: [{required: false, message: '必填:毕业院校', trigger: 'blur'}],
+          beginDate: [{required: false, message: '必填:入职日期', trigger: 'blur'}],
+          conversionTime: [{required: false, message: '必填:转正日期', trigger: 'blur'}],
+          beginContract: [{required: false, message: '必填:合同起始日期', trigger: 'blur'}],
+          endContract: [{required: false, message: '必填:合同终止日期', trigger: 'blur'}],
+          workAge: [{required: false, message: '必填:工龄', trigger: 'blur'}]
         }
       };
     },
@@ -795,23 +803,98 @@
         this.currentPage = currentChange;
         this.loadEmps();
       },
+      handleSizeChange(val) {
+        this.pagesize = val;
+        this.loadEmps();
+      },
+      handleCurrentChange(val) {
+        this.currentPage = val;
+        this.loadEmps();
+      },
       loadEmps(){
         var _this = this;
         this.tableLoading = true;
-        this.getRequest("/employee/basic/emp?page=" + this.currentPage + "&size=10&keywords=" + this.keywords + "&politicId=" + this.emp.politicId + "&nationId=" + this.emp.nationId + "&posId=" + this.emp.posId + "&jobLevelId=" + this.emp.jobLevelId + "&engageForm=" + this.emp.engageForm + "&departmentId=" + this.emp.departmentId + "&beginDateScope=" + this.beginDateScope).then(resp=> {
+        this.getRequest("/employee/basic/listbypage?page=" + this.currentPage + "&size=" + this.pagesize).then(resp => {
           this.tableLoading = false;
           if (resp && resp.status == 200) {
             var data = resp.data;
-            _this.emps = data.emps;
-            _this.totalCount = data.count;
-//            _this.emptyEmpData();
+            _this.emps = data.emplist;
+            _this.totalnum = data.count;
           }
         })
+//         this.getRequest("/employee/basic/emp?page=" + this.currentPage + "&size=10&keywords=" + this.keywords + "&politicId=" + this.emp.politicId + "&nationId=" + this.emp.nationId + "&posId=" + this.emp.posId + "&jobLevelId=" + this.emp.jobLevelId + "&engageForm=" + this.emp.engageForm + "&departmentId=" + this.emp.departmentId + "&beginDateScope=" + this.beginDateScope).then(resp=> {
+//           this.tableLoading = false;
+//           if (resp && resp.status == 200) {
+//             var data = resp.data;
+//             _this.emps = data.emps;
+//             _this.totalCount = data.count;
+// //            _this.emptyEmpData();
+//           }
+//         })
       },
       addEmp(formName){
         var _this = this;
+
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            if(this.emp.nationId !="" && !this.emp.nationId =="undefined"){
+              for(let i=0;i<this.nations.length;i++){
+                if(this.emp.nationId == this.nations[i].id){
+                  this.emp.nationName = this.nations[i].name
+                }
+              }
+            }else{
+              this.emp.nationName = this.nations[0].name
+              this.emp.nationId = this.nations[0].id
+            }
+
+            if(this.emp.politicId !="" && !this.emp.politicId =="undefined"){
+              for(let i=0;i<this.politics.length;i++){
+                if(this.emp.politicId == this.politics[i].id){
+                  this.emp.politicName = this.politics[i].name
+                }
+              }
+            }else{
+              this.emp.politicName = this.politics[0].name
+              this.emp.politicId = this.politics[0].id
+            }
+
+
+            if(this.emp.posId !="" && !this.emp.posId =="undefined"){
+              for(let i=0;i<this.positions.length;i++){
+                if(this.emp.posId == this.positions[i].id){
+                  this.emp.posName = this.positions[i].name
+                }
+              }
+            }else{
+              this.emp.posName = this.positions[0].name
+              this.emp.posId = this.positions[0].id
+            }
+
+            if(this.emp.jobLevelId !="" && !this.emp.jobLevelId =="undefined"){
+              for(let i=0;i<this.joblevels.length;i++){
+                if(this.emp.jobLevelId == this.joblevels[i].id){
+                  this.emp.jobLevelName = this.joblevels[i].name
+                }
+              }
+            }else{
+              this.emp.jobLevelName = this.joblevels[0].name
+              this.emp.jobLevelId = this.joblevels[0].id
+            }
+
+
+            if(this.emp.tiptopDegreeId!="" && !this.emp.tiptopDegreeId =="undefined"){
+              for(let i=0;i<this.degrees.length;i++){
+                if(this.emp.tiptopDegreeId == this.degrees[i].id){
+                  this.emp.tiptopDegreeName = this.degrees[i].name
+                }
+              }
+            }else{
+              this.emp.tiptopDegreeName = this.degrees[0].name
+              this.emp.tiptopDegreeId = this.degrees[0].id
+            }
+            console.log(this.emp);
+
             if (this.emp.id) {
               //更新
               this.tableLoading = true;
@@ -827,6 +910,7 @@
               })
             } else {
               //添加
+
               this.tableLoading = true;
               this.postRequest("/employee/basic/emp", this.emp).then(resp=> {
                 _this.tableLoading = false;
@@ -881,7 +965,6 @@
         })
       },
       showEditEmpView(row){
-        console.log(row)
         this.dialogTitle = "编辑员工";
         this.emp = row;
         this.emp.birthday = this.formatDate(row.birthday);
@@ -889,12 +972,18 @@
         this.emp.beginContract = this.formatDate(row.beginContract);
         this.emp.endContract = this.formatDate(row.endContract);
         this.emp.beginDate = this.formatDate(row.beginDate);
-        this.emp.nationId = row.nation.id;
-        this.emp.politicId = row.politicsStatus.id;
-        this.emp.departmentId = row.department.id;
-        this.emp.departmentName = row.department.name;
-        this.emp.jobLevelId = row.jobLevel.id;
-        this.emp.posId = row.position.id;
+        // this.emp.nationId = row.nation.id;
+        //this.emp.politicId = row.politicsStatus.id;
+        // this.emp.departmentId = row.department.id;
+        // this.emp.departmentName = row.department.name;
+        // this.emp.jobLevelId = row.jobLevel.id;
+        // this.emp.posId = row.position.id;
+        // this.emp.nationName = row.nation.id;
+        //this.emp.politicName = row.politicsStatus.id;
+        // this.emp.departmentName = row.department.id;
+        // this.emp.departmentName = row.department.name;
+        // this.emp.jobLevelName = row.jobLevel.id;
+        // this.emp.posName = row.position.id;
 //        delete this.emp.department;
 //        delete this.emp.jobLevel;
 //        delete this.emp.position;
@@ -905,6 +994,38 @@
         this.dialogVisible = true;
       },
       showAddEmpView(){
+        let itemEmp = {
+            name: '',
+            gender: '',
+            birthday: '',
+            idCard: '',
+            wedlock: '',
+            nationId: '',
+            nativePlace: '',
+            politicId: '',
+            email: '',
+            phone: '',
+            address: '',
+            departmentId: '',
+            departmentName: '所属部门...',
+            jobLevelId: '',
+            posId: '',
+            engageForm: '',
+            tiptopDegree: '',
+            tiptopDegreeName:'',
+            specialty: '',
+            school: '',
+            beginDate: '',
+            workState: '',
+            workID: '',
+            contractTerm: '',
+            conversionTime: '',
+            notWorkDate: '',
+            beginContract: '',
+            endContract: '',
+            workAge: ''
+          }
+        this.emp = itemEmp
         this.dialogTitle = "添加员工";
         this.dialogVisible = true;
         var _this = this;
@@ -922,16 +1043,21 @@
           idCard: '',
           wedlock: '',
           nationId: '',
+          nationName:'',
           nativePlace: '',
           politicId: '',
+          politicName: '',
           email: '',
           phone: '',
           address: '',
           departmentId: '',
-          departmentName: '所属部门...',
+          departmentName: '所属部门',
           jobLevelId: '',
+          jobLevelName:'',
           posId: '',
+          posName:'',
           engageForm: '',
+          tiptopDegreeId:'',
           tiptopDegree: '',
           specialty: '',
           school: '',

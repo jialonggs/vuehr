@@ -53,6 +53,44 @@ export const formatRoutes = (routes)=> {
           require(['../components/statistics/' + component + '.vue'], resolve)
         } else if (component.startsWith("Sys")) {
           require(['../components/system/' + component + '.vue'], resolve)
+        }else if (component.startsWith("Shou")) {
+          require(['../components/sfmo/' + component + '.vue'], resolve)
+        }else if (component.startsWith("Pro")) {
+          require(['../components/project/' + component + '.vue'], resolve)
+        }else if (component.startsWith("Order")) {
+          require(['../components/order/' + component + '.vue'], resolve)
+        }else if (component.startsWith("Offer")) {
+          require(['../components/Offer/' + component + '.vue'], resolve)
+        }else if (component.startsWith("Audit")) {
+          require(['../components/Audit/' + component + '.vue'], resolve)
+        }else if (component.startsWith("Tech")) {
+          require(['../components/Tech/' + component + '.vue'], resolve)
+        }else if (component.startsWith("Yao")) {
+          require(['../components/yao/' + component + '.vue'], resolve)
+        }else if (component.startsWith("Stock")) {
+          require(['../components/Stock/' + component + '.vue'], resolve)
+        }else if (component.startsWith("Material")) {
+          require(['../components/Material/' + component + '.vue'], resolve)
+        }else if(component.startsWith("Quality")){
+          require(['../components/Quality/' + component + '.vue'], resolve)
+        }else if(component.startsWith("Work")){
+          require(['../components/Work/' + component + '.vue'], resolve)
+        }else if(component.startsWith("Count")){
+          require(['../components/Count/' + component + '.vue'], resolve)
+        }else if(component.startsWith("Plant")){
+          require(['../components/Plant/' + component + '.vue'], resolve)
+        }else if(component.startsWith("Stor")){
+          require(['../components/Storage/' + component + '.vue'], resolve)
+        }else if(component.startsWith("FaMo")){
+          require(['../components/famo/' + component + '.vue'], resolve)
+        }else if(component.startsWith("FaAudit")){
+          require(['../components/faaudit/' + component + '.vue'], resolve)
+        }else if(component.startsWith("Finance")){
+          require(['../components/finance/' + component + '.vue'], resolve)
+        }else if(component.startsWith("KaiPiao")){
+          require(['../components/kaipiao/' + component + '.vue'], resolve)
+        }else if(component.startsWith("AfterSale")){
+          require(['../components/aftersale/' + component + '.vue'], resolve)
         }
       },
       name: name,

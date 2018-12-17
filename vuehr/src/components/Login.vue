@@ -15,6 +15,7 @@
   </el-form>
 </template>
 <script>
+import CookieUtils from '../utils/CookieUtils';
   export default{
     data(){
       return {
@@ -24,8 +25,10 @@
         },
         checked: true,
         loginForm: {
-          username: 'admin',
-          password: '123'
+          username: '',
+          password: ''
+          // username: 'admin',
+          // password: '123'
         },
         loading: false
       }
@@ -41,6 +44,15 @@
           _this.loading = false;
           if (resp && resp.status == 200) {
             var data = resp.data;
+            localStorage.setItem('cp_username', data.msg.username);
+            localStorage.setItem('cp_name', data.msg.name);
+            localStorage.setItem('cp_uid', data.msg.id);
+            let jsonString = JSON.stringify(data.msg.roles);
+            localStorage.setItem('cp_role', jsonString);
+            localStorage.setItem('cp_userlogo', data.msg.userface);
+            CookieUtils.setCookie('cp_uid', data.msg.id, 1);
+            CookieUtils.setCookie('cp_username', data.msg.username, 1);
+            CookieUtils.setCookie('cp_name', data.msg.name, 1);
             _this.$store.commit('login', data.msg);
             var path = _this.$route.query.redirect;
             _this.$router.replace({path: path == '/' || path == undefined ? '/home' : path});

@@ -3,6 +3,14 @@ import Router from 'vue-router'
 import Login from '@/components/Login'
 import Home from '@/components/Home'
 import Chat from '@/components/chat/Chat'
+import OrderInfo from '@/components/order/OrderInfo'
+import PerBaoJiaInfo from '@/components/audit/PerBaoJiaInfo'
+import BusBaoJiaInfo from '@/components/audit/BusBaoJiaInfo'
+import PlantOrderInfo from '@/components/plant/PlantOrderInfo'
+import OfferBusInfo from '@/components/offer/OfferBusInfo'
+import OfferPerInfo from '@/components/offer/OfferPerInfo'
+import BusPrint from '@/components/print/Busprint'
+import UserInfo from '@/components/user/userInfo'
 // import EmpAdv from '@/components/emp/EmpAdv'
 // import EmpBasic from '@/components/emp/EmpBasic'
 // import PerEc from '@/components/personnel/PerEc'
@@ -30,12 +38,20 @@ Vue.use(Router)
 
 export default new Router({
   routes: [
+
     {
       path: '/',
       name: 'Login',
       component: Login,
       hidden: true
-    }, {
+    },
+    {
+      path: '/print/bus/:id',
+      name: 'print',
+      component: BusPrint,
+      hidden: true
+    },
+     {
       path: '/home',
       name: '主页',
       component: Home,
@@ -55,6 +71,141 @@ export default new Router({
           }
         }
       ]
-    }
+    },
+    {
+     path: '/home',
+     name: '主页',
+     component: Home,
+     hidden: true,
+     meta: {
+       requireAuth: true
+     },
+     children: [
+       {
+         path: '/userInfo',
+         name: '个人中心',
+         component: UserInfo,
+         hidden: true,
+         meta: {
+           keepAlive: false,
+           requireAuth: true
+         }
+       }
+     ]
+   },
+    {
+      path: '/home',
+      name: '主页',
+      component: Home,
+      hidden: false,
+      meta: {
+        requireAuth: true
+      },
+      children: [
+        {
+          path: '/order/info/:id',
+          name: '消息',
+          component: OrderInfo,
+          hidden: false,
+          meta: {
+            keepAlive: false,
+            requireAuth: true
+          }
+        }
+      ]
+    },
+    // {
+    //   path: '/home',
+    //   name: '主页',
+    //   component: Home,
+    //   hidden: true,
+    //   meta: {
+    //     requireAuth: true
+    //   },
+    //   children: [
+    //     {
+    //       path: '/print/bus/:id',
+    //       name: '打印',
+    //       component: BusPrint,
+    //       hidden: false,
+    //       meta: {
+    //         keepAlive: false,
+    //         requireAuth: true
+    //       }
+    //     }
+    //   ]
+    // },
+    {
+      path: '/home',
+      name: '主页',
+      component: Home,
+      hidden: false,
+      meta: {
+        requireAuth: true
+      },
+      children: [
+        {
+          path: '/bus/offer/info/:id',
+          name: '消息',
+          component: BusBaoJiaInfo,
+          hidden: false,
+          meta: {
+            keepAlive: false,
+            requireAuth: true
+          }
+        },
+        {
+          path: '/per/offer/info/:id',
+          name: '消息',
+          component: PerBaoJiaInfo,
+          hidden: false,
+          meta: {
+            keepAlive: false,
+            requireAuth: true
+          }
+        },
+        {
+          path: '/offer/per/info/:id',
+          name: '消息',
+          component: OfferPerInfo,
+          hidden: false,
+          meta: {
+            keepAlive: false,
+            requireAuth: true
+          }
+        },
+        {
+          path: '/offer/bus/info/:id',
+          name: '消息',
+          component: OfferBusInfo,
+          hidden: false,
+          meta: {
+            keepAlive: false,
+            requireAuth: true
+          }
+        },
+        {
+          path: '/plant/order/info/:id',
+          name: '消息',
+          component: PlantOrderInfo,
+          hidden: false,
+          meta: {
+            keepAlive: false,
+            requireAuth: true
+          }
+        }
+      ]
+    },
+    // {
+    //     //查看订单详情
+    //     path: '/order',
+    //     component: resolve => require(['../components/Home.vue'], resolve),
+    //     children: [
+    //       {
+    //           path: '/info',
+    //           component: resolve => require(['../components/order/OrderInfo.vue'], resolve),
+    //       }
+    //     ]
+    // }
   ]
 })
