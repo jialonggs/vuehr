@@ -508,8 +508,8 @@ export default {
       parm.submitType = 0;
 
       this.table_loading = true;
-      let parms = self.productData;
-      if('undefined' == parms || parms.length <=0 ){
+      let parms_product = self.productData;
+      if('undefined' == parms_product || parms_product.length <=0 ){
         this.$message.error("请录入产品详情");
         return
       }
@@ -518,8 +518,8 @@ export default {
       let total = 0;
       let noTaxTotal = 0;
       let products = [];
-      for (var i = 0; i < parms.length; i++) {
-        let item = parms[i];
+      for (var i = 0; i < parms_product.length; i++) {
+        let item = parms_product[i];
         item.addUserId = this.uid;
         item.addUserName = this.name;
         total = total + item.total;
@@ -527,12 +527,14 @@ export default {
         item.picUrls = this.toPinjieUrl(item.picUrls);
         products.push(item);
       }
-      parm.total = this.elform.total;
-      parm.noTaxTotal = this.elform.noTaxPrice;
+      parm.total = total;
+      parm.noTaxTotal = noTaxTotal;
       let dataParam = {
         yuProductList: products,
         yuBaoJia:parm
       }
+      // console.log(dataParam);
+      // return;
       this.jsonPostRequest("/offer/per/add", dataParam).then(resp => {
         if (resp && resp.status == 200 && resp.data.code == 0) {
           self.$message.success("添加成功");
@@ -651,11 +653,11 @@ export default {
         area: self.elform.area,
         dongMo: self.elform.dongMo,
         coefficient: self.elform.coefficient,
-        price: self.elform.price,
+        price: self.elform.noTaxPrice,
         picUrls: self.imageUrls,
         tax: self.ruleForm.tax,
-        noTaxPrice: self.elform.price * self.elform.productNum,
-        total: total,
+        noTaxPrice: self.elform.noTaxPrice * self.elform.productNum,
+        total: self.elform.total* self.elform.productNum,
         immutable: false,
         addUserId: this.uid,
         addUserName: this.name

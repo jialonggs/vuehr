@@ -164,7 +164,6 @@ export default {
         _this.tableLoading = false;
         if (resp && resp.status == 200 && resp.data.code == 0) {
           _this.tableData = resp.data.data.yubaojialist
-          console.log(_this.tableData);
           _this.totalnum = resp.data.data.count
         }
       })

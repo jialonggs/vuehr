@@ -736,6 +736,12 @@
                     <el-option label="100%" value="100"></el-option>
                   </el-select>
                 </el-form-item>
+                <el-form-item label="自定义面积比例:">
+                   <el-input-number v-model="form.biLi2" :precision="2" :step="0.1" :max="100" placeholder="如输入则以输入为准"></el-input-number>
+                  <!-- <el-select v-model="form.biLi" placeholder="请选择加工面积比例">
+                    <el-option label="10%" value="10"></el-option>
+                  </el-select> -->
+                </el-form-item>
                 <el-form-item>
                   <el-button style="float:right" type="primary" @click="selectYga">确 定</el-button>
                 </el-form-item>
@@ -938,7 +944,17 @@ export default {
       // let tieHuaBuShu = 3;
       // let tieHuaBuShu = this.itemOrder.techCard.tieHuaBuShu
       let workArea = this.itemOrder.workArea
-      let biLi = this.form.biLi
+      let biLi = 0;
+      biLi = this.form.biLi
+      let bili2 = this.form.biLi2;
+      if(bili2 !== 'undefined' && bili2 > 0){
+         this.$message.info("将以输入为准");
+         biLi = bili2;
+      }
+      if(biLi+'' === 'undefined' || biLi<= 0){
+        this.$message.info("请选择或输入贴花比例");
+        return;
+      }
       let yga = {
         userId: '',
         userName: '',
@@ -1030,7 +1046,7 @@ export default {
       }
       let biLi = 0;
       for (var i = 0; i < yags.length; i++) {
-        biLi = biLi + parseInt(yags[i].biLi);
+        biLi = this.accAdd(biLi + parseFloat(yags[i].biLi));
       }
       if (biLi + '' !== "100") {
         self.$message.error("分配总比例不等于100%");
@@ -1054,6 +1070,45 @@ export default {
         }
       });
     },
+ accAdd(arg1, arg2) {
+  if (isNaN(arg1)) {
+      arg1 = 0;
+  }
+  if (isNaN(arg2)) {
+      arg2 = 0;
+  }
+  arg1 = Number(arg1);
+  arg2 = Number(arg2);
+  var r1, r2, m, c;
+  try {
+      r1 = arg1.toString().split(".")[1].length;
+  }
+  catch (e) {
+      r1 = 0;
+  }
+  try {
+      r2 = arg2.toString().split(".")[1].length;
+  }
+  catch (e) {
+      r2 = 0;
+  }
+  c = Math.abs(r1 - r2);
+  m = Math.pow(10, Math.max(r1, r2));
+  if (c > 0) {
+      var cm = Math.pow(10, c);
+      if (r1 > r2) {
+          arg1 = Number(arg1.toString().replace(".", ""));
+          arg2 = Number(arg2.toString().replace(".", "")) * cm;
+      } else {
+          arg1 = Number(arg1.toString().replace(".", "")) * cm;
+          arg2 = Number(arg2.toString().replace(".", ""));
+      }
+  } else {
+      arg1 = Number(arg1.toString().replace(".", ""));
+      arg2 = Number(arg2.toString().replace(".", ""));
+  }
+  return (arg1 + arg2) / m;
+},
     // 重置
     resetForm(formName) {
       this.$refs[formName].resetFields();

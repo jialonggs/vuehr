@@ -293,6 +293,7 @@ export default {
   },
   data() {
     return {
+      tableLoading2: false,
       tableLoading1: false,
       upload: '',
       imageData: {

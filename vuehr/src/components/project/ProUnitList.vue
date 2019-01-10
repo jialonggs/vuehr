@@ -285,7 +285,9 @@ export default {
               this.$message.success("添加成功")
               this.getCollectMouldList();
             } else {
-              this.$message.error("添加失败")
+              console.log(resp);
+              var message = resp.data.message
+              this.$message.error(message)
             }
           })
         } else {

@@ -10,9 +10,9 @@
       <el-tab-pane label="职称管理" name="jobTitleMana">
         <pos-mana state="jobtitle"></pos-mana>
       </el-tab-pane>
-      <!-- <el-tab-pane label="奖惩规则" name="ecCfg">
+      <el-tab-pane label="移动端管理" name="ecCfg">
         <ec-mana></ec-mana>
-      </el-tab-pane> -->
+      </el-tab-pane>
       <el-tab-pane label="权限组" name="menuRole">
         <menu-role></menu-role>
       </el-tab-pane>

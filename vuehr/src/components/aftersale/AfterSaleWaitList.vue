@@ -72,7 +72,7 @@
           <el-form ref="form" :model="form" label-width="120px">
                 <el-form-item label="选择售后人员:">
                   <el-select v-model="itemYga" placeholder="请选工售后人员">
-                    <el-option v-for="item in restaurants4" :key="item.value" :label="item.label" :value="item"></el-option>
+                    <el-option v-for="item1 in restaurants4" :key="item1.value" :label="item1.label" :value="item1"></el-option>
                   </el-select>
                 </el-form-item>
               <el-form-item label="备注：">
@@ -177,9 +177,10 @@
 export default {
   data() {
     return {
+      item:{},
       restaurants4:[],
       username: '',
-      itemYga:[],
+      itemYga:'',
       name: '',
       uid: '',
       fenPei:'',
@@ -218,12 +219,11 @@ export default {
      let shouhou = {
           remark: this.form.remark,
           orderId: this.fenPei.order.id,
-          userId: this.itemYag.value,
+          userId: this.itemYga.value,
           userName: this.itemYga.label,
           addUserId:this.uid,
           addUserName:this.name
       }
-
       this.jsonPostRequest("/after/sale/wait/add", shouhou).then(resp => {
         if (resp && resp.status == 200 && resp.data.code == 0) {
           this.$message.success("分配成功");
@@ -251,6 +251,7 @@ export default {
               item.push(elem);
             }
             self.restaurants4 = item;
+
           }
         } else {
           console.log("获取列表数据失败");

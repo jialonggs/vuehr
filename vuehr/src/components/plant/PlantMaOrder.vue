@@ -165,6 +165,8 @@
 export default {
   data() {
     return {
+      restaurants2: [],
+       state3: '',
       dialogTableVisible1:false,
       itemTiaoZhen: {
         liuZhuanBiLi: '0',
@@ -382,7 +384,7 @@ export default {
         if (resp && resp.status == 200 && resp.data.code == 0) {
 
           _this.tableData = resp.data.data.orderlist
-            console.log(_this.tableData);
+          //  console.log(_this.tableData);
           _this.totalnum = resp.data.data.count
         }
       })

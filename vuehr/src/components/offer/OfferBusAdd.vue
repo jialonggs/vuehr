@@ -507,8 +507,8 @@ export default {
       parm.submitType = 0;
 
       this.table_loading = true;
-      let parms = self.productData;
-      if('undefined' == parms || parms.length <=0 ){
+      let parms_product = self.productData;
+      if('undefined' == parms_product || parms_product.length <=0 ){
         this.$message.error("请录入产品详情");
         return
       }
@@ -517,17 +517,17 @@ export default {
       let total = 0;
       let noTaxTotal = 0;
       let products = [];
-      for (var i = 0; i < parms.length; i++) {
-        let item = parms[i];
+      for (var i = 0; i < parms_product.length; i++) {
+        let item = parms_product[i];
         item.addUserId = this.uid;
         item.addUserName = this.name;
-        //total = total + item.total;
-        //noTaxTotal = noTaxTotal + item.noTaxPrice;
+        total = total + item.total;
+        noTaxTotal = noTaxTotal + item.noTaxPrice;
         item.picUrls = this.toPinjieUrl(item.picUrls);
         products.push(item);
       }
-      parm.total = this.elform.totalPrice;
-      parm.noTaxTotal = this.elform.totalPrice;
+      parm.total = total;
+      parm.noTaxTotal = noTaxTotal;
       let dataParam = {
         businessProductList: products,
         businessBaoJia:parm
@@ -650,7 +650,7 @@ export default {
         area: self.elform.area,
         dongMo: self.elform.dongMo,
         coefficient: self.elform.coefficient,
-        price: self.elform.price,
+        price: self.elform.noTaxPrice,
         picUrls: self.imageUrls,
         tax: self.ruleForm.tax,
         noTaxPrice: self.elform.noTaxPrice,

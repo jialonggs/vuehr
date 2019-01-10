@@ -16,13 +16,22 @@
           </el-input>
           <el-button type="primary" size="mini" style="margin-left: 5px" icon="el-icon-search" @click="searchEmp">搜索
           </el-button>
+
           <!-- <el-button slot="reference" type="primary" size="mini" style="margin-left: 5px"
                      @click="showAdvanceSearchView"><i
             class="fa fa-lg" v-bind:class="[advanceSearchViewVisible ? faangledoubleup:faangledoubledown]"
             style="margin-right: 5px"></i>高级搜索
           </el-button> -->
         </div>
+
         <div style="margin-left: 5px;margin-right: 20px;display: inline">
+          <a href='http://39.107.78.95:8888/jlmanager/yu_bao_jia/test.xls' download="w3logo">下载原文件</a>
+          <!-- <el-button type="danger" size="mini" @click="toTestexportEmps">
+            <i class="fa fa-lg fa-level-down" style="margin-right: 5px"></i>下载模板
+          </el-button> -->
+
+          <!-- <a class='download' :href="../../test.xls" download=""  title="下载">下载</a> -->
+
           <el-upload
             :show-file-list="false"
             accept="application/vnd.ms-excel"
@@ -37,6 +46,7 @@
           <el-button type="success" size="mini" @click="exportEmps"><i class="fa fa-lg fa-level-down"
                                                                        style="margin-right: 5px"></i>导出数据
           </el-button>
+
           <el-button type="primary" size="mini" icon="el-icon-plus"
                      @click="showAddEmpView">
             添加员工
@@ -726,6 +736,9 @@
       },
       beforeFileUpload(file){
         this.fileUploadBtnText = '正在导入';
+      },
+      toTestexportEmps(){
+          window.location.href= "http://39.107.78.95:8888/jlmanager/yu_bao_jia/35/19775_1536797991333.jpg";
       },
       exportEmps(){
 //        var iframe = document.createElement("iframe");

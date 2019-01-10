@@ -152,8 +152,8 @@
            </el-date-picker>
            <!-- <el-input v-model="xzOrder.startDate" ></el-input> -->
          </el-form-item>
-         <el-form-item label="售后人员：" prop="shouHouMan">
-            <el-input v-model="xzOrder.shouHouMan" ></el-input>
+         <el-form-item label="售后人员：" prop="userName">
+            <el-input v-model="xzOrder.userName" ></el-input>
          </el-form-item>
        </div>
        </el-col>
@@ -327,6 +327,8 @@ export default {
       this.xzOrder = data.shXzOrder;
       this.xzOrder.danWei = data.danwei;
       this.xzOrder.address= data.address;
+      this.xzOrder.userName= data.userName;
+
       if(data.shXzOrder.gongJu.length > 0){
         this.checkedGongJus = data.shXzOrder.gongJu.split(',');
       }
@@ -464,6 +466,7 @@ export default {
           addUserId:this.uid,
           addUserName:this.name
       }
+      
 
       this.jsonPostRequest("/after/sale/wait/add", shouhou).then(resp => {
         if (resp && resp.status == 200 && resp.data.code == 0) {
