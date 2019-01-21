@@ -30,6 +30,7 @@
       </template>
           </el-table-column>
           <el-table-column label="已付款比例" prop="financeBiLi">
+              <template slot-scope="scope">{{ scope.row.financeBiLi}}%</template>
           </el-table-column>
           <el-table-column label="已付款金额" prop="financeJinE">
           </el-table-column>
@@ -42,12 +43,12 @@
             <template slot-scope="scope">{{ scope.row.createTime | formatDateTime}}</template>
           </el-table-column>
           <el-table-column label="操作">
-            <template slot-scope="scope">
+            <!-- <template slot-scope="scope">
             <el-button
                 size="mini"
                 type="warning"
                 @click="">详情</el-button>
-          </template>
+          </template> -->
           </el-table-column>
         </el-table>
       </el-main>

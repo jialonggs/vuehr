@@ -84,8 +84,8 @@
       </el-pagination>
     </div>
     <!-- 添加记录 -->
-    <el-dialog :title="orderTitle" :visible.sync="dialogFormVisible" width='50%' >
-      <div v-loading="addtechloading">
+    <el-dialog :title="orderTitle" :visible.sync="dialogFormVisible" v-loading="addtechloading" width='50%' >
+      <div>
           <div >
               <div>
                 <span>项目名称：{{this.itemOrder.project.projectName}}</span>
@@ -216,8 +216,6 @@ export default {
     }
   },
     toAdd(item,wenLi){
-      console.log(wenLi);
-      console.log(item);
       this.itemWenLi = {};
       this.mouldLists = [];
       this.itemOrder = [];

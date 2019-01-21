@@ -149,7 +149,7 @@ export default {
       let shiFu = this.form.financeJinE
       if(shiFu!== '' && shiFu !=='undefined'){
         let biLi = shiFu / this.itemBus.total
-        this.form.financeBiLi = Math.round(biLi*100)/100;
+        this.form.financeBiLi = Math.round(biLi*100);
       }
     },
     toWeiFuKuan(item) {

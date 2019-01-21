@@ -161,7 +161,6 @@ export default {
     getCollectMouldList() {
       let _this = this
       this.getRequest("/storage/put/listbypage?page=" + this.currentPage + "&size=" + this.pagesize +"&storageStatus=" +'3').then(resp => {
-        _this.tableLoading = false;
         if (resp && resp.status == 200 && resp.data.code == 0) {
           _this.tableData = resp.data.data.putorderlist
           _this.totalnum = resp.data.data.count

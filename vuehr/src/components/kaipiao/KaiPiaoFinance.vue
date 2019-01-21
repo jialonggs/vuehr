@@ -18,23 +18,28 @@
                 </el-table-column>
                 <el-table-column label="单位" prop="danWei">
                 </el-table-column>
+                <el-table-column label="类型" prop="kaiPiaoType">
+                  <template slot-scope="scope">
+                  <el-tag v-if="scope.row.kaiPiaoType+'' === '1'" type="warning">欠款开票</el-tag>
+                  <el-tag v-if="scope.row.kaiPiaoType+'' === '2'" type="primary">到款开票</el-tag>
+                  </template>
+                </el-table-column>
                 <el-table-column label="审核状态">
                   <template slot-scope="scope">
                     <el-tag v-if="scope.row.status+'' === '0'" type="info">待审核</el-tag>
-                    <el-tag v-if="scope.row.status+'' === '1'" type="primary">商务通过</el-tag>
-                    <el-tag v-if="scope.row.status+'' === '-1'" type="warning">商务未通过</el-tag>
+                    <el-tag v-if="scope.row.status+'' === '1' && scope.row.kaiPiaoType+'' === '2'" type="primary">文员通过</el-tag>
+                    <el-tag v-if="scope.row.status+'' === '-1' && scope.row.kaiPiaoType+'' === '2'" type="warning">文员未通过</el-tag>
+                    <el-tag v-if="scope.row.status+'' === '1' && scope.row.kaiPiaoType+'' === '1'" type="primary">商务通过</el-tag>
+                    <el-tag v-if="scope.row.status+'' === '-1' && scope.row.kaiPiaoType+'' === '1'" type="warning">商务未通过</el-tag>
                     <el-tag v-if="scope.row.status+'' === '2'" type="primary">经理通过</el-tag>
                     <el-tag v-if="scope.row.status+'' === '-2'" type="danger">经理未通过</el-tag>
-                    <el-tag v-if="scope.row.status+'' === '3'" type="danger">经理通过</el-tag>
-                    <el-tag v-if="scope.row.status+'' === '-3'" type="primary">经理未通过</el-tag>
+                    <el-tag v-if="scope.row.status+'' === '3'" type="danger">财务通过</el-tag>
+                    <el-tag v-if="scope.row.status+'' === '-3'" type="primary">财务未通过</el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column label="付款方式" prop="fuKuanType">
                   <template slot-scope="scope">
-                  <el-tag v-if="scope.row.fuKuanType+'' === '0'" type="info">现金</el-tag>
-                  <el-tag v-if="scope.row.fuKuanType+'' === '1'" type="primary">汇票</el-tag>
-                  <el-tag v-if="scope.row.fuKuanType+'' === '2'" type="warning">汇款</el-tag>
-                  <el-tag v-if="scope.row.fuKuanType+'' === '3'" type="primary">支票</el-tag>
+                <el-tag  type="primary">{{scope.row.fuKuanType}}</el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column label="是否付清" prop="fuQing">
@@ -71,23 +76,28 @@
                 </el-table-column>
                 <el-table-column label="单位" prop="danWei">
                 </el-table-column>
+                <el-table-column label="类型" prop="kaiPiaoType">
+                  <template slot-scope="scope">
+                  <el-tag v-if="scope.row.kaiPiaoType+'' === '1'" type="warning">欠款开票</el-tag>
+                  <el-tag v-if="scope.row.kaiPiaoType+'' === '2'" type="primary">到款开票</el-tag>
+                  </template>
+                </el-table-column>
                 <el-table-column label="审核状态">
                   <template slot-scope="scope">
                     <el-tag v-if="scope.row.status+'' === '0'" type="info">待审核</el-tag>
-                    <el-tag v-if="scope.row.status+'' === '1'" type="primary">商务通过</el-tag>
-                    <el-tag v-if="scope.row.status+'' === '-1'" type="warning">商务未通过</el-tag>
+                    <el-tag v-if="scope.row.status+'' === '1' && scope.row.kaiPiaoType+'' === '2'" type="primary">文员通过</el-tag>
+                    <el-tag v-if="scope.row.status+'' === '-1' && scope.row.kaiPiaoType+'' === '2'" type="warning">文员未通过</el-tag>
+                    <el-tag v-if="scope.row.status+'' === '1' && scope.row.kaiPiaoType+'' === '1'" type="primary">商务通过</el-tag>
+                    <el-tag v-if="scope.row.status+'' === '-1' && scope.row.kaiPiaoType+'' === '1'" type="warning">商务未通过</el-tag>
                     <el-tag v-if="scope.row.status+'' === '2'" type="primary">经理通过</el-tag>
                     <el-tag v-if="scope.row.status+'' === '-2'" type="danger">经理未通过</el-tag>
-                    <el-tag v-if="scope.row.status+'' === '3'" type="danger">经理通过</el-tag>
-                    <el-tag v-if="scope.row.status+'' === '-3'" type="primary">经理未通过</el-tag>
+                    <el-tag v-if="scope.row.status+'' === '3'" type="danger">财务通过</el-tag>
+                    <el-tag v-if="scope.row.status+'' === '-3'" type="primary">财务未通过</el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column label="付款方式" prop="fuKuanType">
                   <template slot-scope="scope">
-                  <el-tag v-if="scope.row.fuKuanType+'' === '0'" type="info">现金</el-tag>
-                  <el-tag v-if="scope.row.fuKuanType+'' === '1'" type="primary">汇票</el-tag>
-                  <el-tag v-if="scope.row.fuKuanType+'' === '2'" type="warning">汇款</el-tag>
-                  <el-tag v-if="scope.row.fuKuanType+'' === '3'" type="primary">支票</el-tag>
+                <el-tag  type="primary">{{scope.row.fuKuanType}}</el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column label="是否付清" prop="fuQing">
@@ -124,23 +134,28 @@
                 </el-table-column>
                 <el-table-column label="单位" prop="danWei">
                 </el-table-column>
+                <el-table-column label="类型" prop="kaiPiaoType">
+                  <template slot-scope="scope">
+                  <el-tag v-if="scope.row.kaiPiaoType+'' === '1'" type="warning">欠款开票</el-tag>
+                  <el-tag v-if="scope.row.kaiPiaoType+'' === '2'" type="primary">到款开票</el-tag>
+                  </template>
+                </el-table-column>
                 <el-table-column label="审核状态">
                   <template slot-scope="scope">
                     <el-tag v-if="scope.row.status+'' === '0'" type="info">待审核</el-tag>
-                    <el-tag v-if="scope.row.status+'' === '1'" type="primary">商务通过</el-tag>
-                    <el-tag v-if="scope.row.status+'' === '-1'" type="warning">商务未通过</el-tag>
+                    <el-tag v-if="scope.row.status+'' === '1' && scope.row.kaiPiaoType+'' === '2'" type="primary">文员通过</el-tag>
+                    <el-tag v-if="scope.row.status+'' === '-1' && scope.row.kaiPiaoType+'' === '2'" type="warning">文员未通过</el-tag>
+                    <el-tag v-if="scope.row.status+'' === '1' && scope.row.kaiPiaoType+'' === '1'" type="primary">商务通过</el-tag>
+                    <el-tag v-if="scope.row.status+'' === '-1' && scope.row.kaiPiaoType+'' === '1'" type="warning">商务未通过</el-tag>
                     <el-tag v-if="scope.row.status+'' === '2'" type="primary">经理通过</el-tag>
                     <el-tag v-if="scope.row.status+'' === '-2'" type="danger">经理未通过</el-tag>
-                    <el-tag v-if="scope.row.status+'' === '3'" type="danger">经理通过</el-tag>
-                    <el-tag v-if="scope.row.status+'' === '-3'" type="primary">经理未通过</el-tag>
+                    <el-tag v-if="scope.row.status+'' === '3'" type="danger">财务通过</el-tag>
+                    <el-tag v-if="scope.row.status+'' === '-3'" type="primary">财务未通过</el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column label="付款方式" prop="fuKuanType">
                   <template slot-scope="scope">
-                  <el-tag v-if="scope.row.fuKuanType+'' === '0'" type="info">现金</el-tag>
-                  <el-tag v-if="scope.row.fuKuanType+'' === '1'" type="primary">汇票</el-tag>
-                  <el-tag v-if="scope.row.fuKuanType+'' === '2'" type="warning">汇款</el-tag>
-                  <el-tag v-if="scope.row.fuKuanType+'' === '3'" type="primary">支票</el-tag>
+                <el-tag  type="primary">{{scope.row.fuKuanType}}</el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column label="是否付清" prop="fuQing">

@@ -537,7 +537,7 @@ export default {
           self.$message.success("添加成功");
           this.$router.push('/offer/bus/list');
         } else {
-          self.$message.error("添加失败");
+          self.$message.error(resp.data.data.message);
         }
       })
     },
@@ -603,7 +603,7 @@ export default {
         productNum: self.elform.productNum,
         area: self.elform.area,
         dongMo: self.elform.dongMo,
-        coefficient: self.elform.coefficient,
+        coefficient: self.elform.coefficient + '',
         price: self.elform.price,
         picUrls: self.imageUrls,
         tax: self.ruleForm.tax,

@@ -66,7 +66,7 @@
               type="primary"
               @click="xiangQing(scope.row)">详情</el-button>
               <el-button
-                v-if="scope.row.kaiPiaoStatus +'' ==='0'"
+                v-if="scope.row.kaiPiaoStatus +'' ==='0' && scope.row.businessBaoJia.audit+'' === '1'"
                 size="mini"
                 type="primary"
                 @click="toKaiPiao(scope.row)">开票</el-button>
@@ -616,6 +616,14 @@
 
   <el-dialog title="开票申请" :visible.sync="dialogFormVisible2" width='80%' v-loading="tableLoading2">
     <div class="form-box">
+      <div>
+        开票类型 :<el-tag v-if="itemKaiPiao.financeBiLi+'' !== '100'" type="warning">欠款开票</el-tag>
+        <el-tag v-if="itemKaiPiao.financeBiLi+'' === '100'" type="success">到款开票</el-tag>
+      </div>
+      <div>
+        <p>剩余开票金额: <el-tag type="danger">{{itemKaiPiao.needKaiPiao}}</el-tag></p>
+      </div>
+      <div style="width:100%;height:1px;border-top:1px solid;margin-bottom:15px;"></div>
       <el-form ref="kaiPiao" :model="this.kaiPiao" label-width="120px">
         <el-row :gutter="20">
           <el-col :span="12">
@@ -669,7 +677,9 @@
                 <el-input v-model="kaiPiao.shuLiang"></el-input>
               </el-form-item>
               <el-form-item label="含税金额：" prop="jinE">
-                <el-input v-model="kaiPiao.jinE"></el-input>
+                <el-input-number v-model="kaiPiao.jinE" controls-position="right"  :min="1" ></el-input-number>
+                <!-- <el-input-number v-model="kaiPiao.jinE"></el-input-number> -->
+                <!-- <el-input v-model="kaiPiao.jinE"></el-input> -->
               </el-form-item>
             </div>
           </el-col>
@@ -853,10 +863,16 @@ export default {
       let self = this;
       let parmas = {}
       parmas = this.kaiPiao;
+      if(this.kaiPiao.jinE > this.itemKaiPiao.needKaiPiao){
+        this.$message.error("开票金额有误")
+        return;
+      }
       parmas.projectId = self.itemKaiPiao.id;
       parmas.projectName = self.itemKaiPiao.projectName;
       parmas.addUserId = this.uid;
       parmas.addUserName = this.name;
+      console.log(parmas);
+      return;
       self.tableLoading2 = true;
       this.postRequest("/kai/piao/add", parmas).then(resp => {
         self.tableLoading2 = false;
@@ -878,7 +894,6 @@ export default {
     xiangQing(item) {
       this.nowTab = 2;
       this.itemProject = item;
-      console.log(this.itemProject);
       this.orderList = item.orders
       this.businessBaoJiaInfo = item.businessBaoJia
       this.yuBaoJiaInfo = item.yuBaoJia

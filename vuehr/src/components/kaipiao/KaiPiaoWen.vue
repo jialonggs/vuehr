@@ -4,7 +4,7 @@
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item><i class="el-icon-menu"></i>开票审核</el-breadcrumb-item>
-        <el-breadcrumb-item>商务审核记录</el-breadcrumb-item>
+        <el-breadcrumb-item>文员审核记录</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <el-container>
@@ -39,7 +39,11 @@
                 </el-table-column>
                 <el-table-column label="付款方式" prop="fuKuanType">
                   <template slot-scope="scope">
-                <el-tag  type="primary">{{scope.row.fuKuanType}}</el-tag>
+                    <el-tag  type="primary">{{scope.row.fuKuanType}}</el-tag>
+                  <!-- <el-tag v-if="scope.row.fuKuanType+'' === '0'" type="info">现金</el-tag>
+                  <el-tag v-if="scope.row.fuKuanType+'' === '1'" type="primary">汇票</el-tag>
+                  <el-tag v-if="scope.row.fuKuanType+'' === '2'" type="warning">汇款</el-tag>
+                  <el-tag v-if="scope.row.fuKuanType+'' === '3'" type="primary">支票</el-tag> -->
                   </template>
                 </el-table-column>
                 <el-table-column label="是否付清" prop="fuQing">
@@ -97,7 +101,11 @@
                 </el-table-column>
                 <el-table-column label="付款方式" prop="fuKuanType">
                   <template slot-scope="scope">
-                <el-tag  type="primary">{{scope.row.fuKuanType}}</el-tag>
+                    <el-tag  type="primary">{{scope.row.fuKuanType}}</el-tag>
+                  <!-- <el-tag v-if="scope.row.fuKuanType+'' === '0'" type="info">现金</el-tag>
+                  <el-tag v-if="scope.row.fuKuanType+'' === '1'" type="primary">汇票</el-tag>
+                  <el-tag v-if="scope.row.fuKuanType+'' === '2'" type="warning">汇款</el-tag>
+                  <el-tag v-if="scope.row.fuKuanType+'' === '3'" type="primary">支票</el-tag> -->
                   </template>
                 </el-table-column>
                 <el-table-column label="是否付清" prop="isFuQing">
@@ -155,7 +163,10 @@
                 </el-table-column>
                 <el-table-column label="付款方式" prop="fuKuanType">
                   <template slot-scope="scope">
-                <el-tag  type="primary">{{scope.row.fuKuanType}}</el-tag>
+                  <el-tag  type="primary">{{scope.row.fuKuanType}}</el-tag>
+                  <!-- <el-tag v-if="scope.row.fuKuanType+'' === '1'" type="primary">汇票</el-tag>
+                  <el-tag v-if="scope.row.fuKuanType+'' === '2'" type="warning">汇款</el-tag>
+                  <el-tag v-if="scope.row.fuKuanType+'' === '3'" type="primary">支票</el-tag> -->
                   </template>
                 </el-table-column>
                 <el-table-column label="是否付清" prop="isFuQing">
@@ -456,8 +467,9 @@ export default {
     // 获取待审核的列表
     getCollectMouldList(audit, currentPage, pagesize) {
       let _this = this
-      this.getRequest("/kai/piao/listbypage?page=" + currentPage + "&size=" + pagesize + "&status=" + audit +"&type=1").then(resp => {
+      this.getRequest("/kai/piao/listbypage?page=" + currentPage + "&size=" + pagesize + "&status=" + audit + "&type=2").then(resp => {
         if (resp && resp.status == 200 && resp.data.code == 0) {
+          console.log(resp);
           if (audit == 0) {
             _this.tableData0 = resp.data.data.famolist
             _this.totalnum0 = resp.data.data.count
