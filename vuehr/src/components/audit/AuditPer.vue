@@ -32,6 +32,8 @@
                 <span>{{scope.row.createTime | formatDateTime}}</span>
               </template>
                 </el-table-column>
+                <el-table-column label="业务员" prop="addUserName">
+                </el-table-column>
                 <el-table-column align="center" label="操作">
                   <template slot-scope="scope">
               <el-button
@@ -71,6 +73,8 @@
                 <span>{{scope.row.createTime | formatDateTime}}</span>
               </template>
                 </el-table-column>
+                <el-table-column label="业务员" prop="addUserName">
+                </el-table-column>
                 <el-table-column align="center" label="操作">
                   <template slot-scope="scope">
               <el-button
@@ -109,6 +113,8 @@
                   <template slot-scope="scope">
                 <span>{{scope.row.createTime | formatDateTime}}</span>
               </template>
+                </el-table-column>
+                <el-table-column label="业务员" prop="addUserName">
                 </el-table-column>
                 <el-table-column align="center" label="操作">
                   <template slot-scope="scope">

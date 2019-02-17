@@ -28,30 +28,30 @@
             <el-tag v-if="scope.row.audit+'' === '2'" type="danger">驳回</el-tag>
           </template>
             </el-table-column>
-            <!-- <el-table-column label="最终价格(含税)" prop="finalBaoJia">
-            </el-table-column> -->
-            <el-table-column label="最终价格(含税)" prop="finalBaoJia">
-              <template slot-scope="scope">
-            <el-popover trigger="hover" placement="top" >
-              <p >不含税价: {{ scope.row.noTaxfinalBaoJia}}</p>
-              <div slot="reference" class="name-wrapper">
-                <span size="medium">{{ scope.row.finalBaoJia}}</span>
-              </div>
-            </el-popover>
-          </template>
-            </el-table-column>
-            <el-table-column label="税率" prop="tax">
-            </el-table-column>
-            <!-- <el-table-column label="税前合计" prop="noTaxTotal">
-            </el-table-column> -->
-
-
             <el-table-column label="初次报价(含税)" prop="total">
               <template slot-scope="scope">
             <el-popover trigger="hover" placement="top" >
               <p >不含税价: {{ scope.row.noTaxTotal }}</p>
               <div slot="reference" class="name-wrapper">
                 <span size="medium">{{ scope.row.total }}</span>
+              </div>
+            </el-popover>
+          </template>
+            </el-table-column>
+            <!-- <el-table-column label="最终价格(含税)" prop="finalBaoJia">
+            </el-table-column> -->
+
+            <el-table-column label="税率" prop="tax">
+            </el-table-column>
+            <!-- <el-table-column label="税前合计" prop="noTaxTotal">
+            </el-table-column> -->
+
+            <el-table-column label="最终价格(含税)" prop="finalBaoJia">
+              <template slot-scope="scope">
+            <el-popover trigger="hover" placement="top" >
+              <p >不含税价: {{ scope.row.noTaxfinalBaoJia}}</p>
+              <div slot="reference" class="name-wrapper">
+                <span size="medium">{{ scope.row.finalBaoJia}}</span>
               </div>
             </el-popover>
           </template>

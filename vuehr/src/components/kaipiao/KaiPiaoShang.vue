@@ -50,6 +50,8 @@
                 </el-table-column>
                 <el-table-column label="含税金额" prop="jinE">
                 </el-table-column>
+                <el-table-column label="申请人员" prop="addUserName">
+                </el-table-column>
                 <el-table-column label="申请时间" prop="createTime">
                   <template slot-scope="scope">
                 <span>{{scope.row.createTime | formatDateTime}}</span>
@@ -107,6 +109,8 @@
                   </template>
                 </el-table-column>
                 <el-table-column label="含税金额" prop="jinE">
+                </el-table-column>
+                <el-table-column label="申请人员" prop="addUserName">
                 </el-table-column>
                 <el-table-column label="申请时间" prop="createTime">
                   <template slot-scope="scope">
@@ -166,6 +170,8 @@
                 </el-table-column>
                 <el-table-column label="含税金额" prop="jinE">
                 </el-table-column>
+                <el-table-column label="申请人员" prop="addUserName">
+                </el-table-column>
                 <el-table-column label="申请时间" prop="createTime">
                   <template slot-scope="scope">
                 <span>{{scope.row.createTime | formatDateTime}}</span>
@@ -191,28 +197,58 @@
     </el-container>
   </div>
   <el-dialog title="审核开票申请" :visible.sync="dialogFormVisible2" width='80%' v-loading="tableLoading2">
+    <div style="margin-top:5px;">
+      到款比例 :<el-tag  type="warning">{{kaiPiao.financeBiLi}}</el-tag>
+    </div>
+    <div style="margin-top:5px;">
+      到款金额 :<el-tag  type="default">{{kaiPiao.financeJinE}}</el-tag>
+    </div>
+    <div style="margin-top:5px;">
+      最终优惠价:<el-tag  type="default">{{kaiPiao.finalBaoJia}}</el-tag>
+    </div>
+    <div>
+      <p>剩余开票金额: <el-tag type="danger">{{kaiPiao.needKaiPiao}}</el-tag></p>
+    </div>
+    <div style="width:100%;height:1px;border-top:1px solid;margin-bottom:15px;"></div>
     <div class="form-box">
       <el-form ref="form" :model="kaiPiao" label-width="120px">
         <el-row :gutter="20">
           <el-col :span="12">
             <div class="grid-content bg-purple">
-              <el-form-item label="合同页：" prop="heTongYe">
+              <el-form-item label="开票单位名称：" prop="unitName">
+                <el-input v-model="kaiPiao.unitName" :disabled="true"></el-input>
+              </el-form-item>
+              <el-form-item label="开票信息资料：">
+                <div>
+                  <a :href="kaiPiao.xinXiUrl" target="_blank"> 点击查看</a>
+                  <!-- <vue-core-image-upload :crop="false" inputOfFile="imageFile" :url="upload" extensions="png,gif,jpeg,jpg" :class="['el-button', 'el-button--primary']" :max-file-size="5242880" :data="imageData" text="上传图片" :multiple="true" :multiple-size="30" credentials="true"
+                    @imageuploaded="imageuploaded" @errorhandle="handleError">
+                  </vue-core-image-upload> -->
+                </div>
+              </el-form-item>
+              <!-- <el-form-item label="合同页：" prop="heTongYe">
                 <el-input v-model="kaiPiao.heTongYe" ></el-input>
-              </el-form-item>
-              <el-form-item label="名 称：" prop="unitName">
+              </el-form-item> -->
+              <!-- <el-form-item label="名 称：" prop="unitName">
                 <el-input v-model="kaiPiao.unitName" ></el-input>
-              </el-form-item>
-              <el-form-item label="地 址：" prop="unitDiZhi">
+              </el-form-item> -->
+              <!-- <el-form-item label="地 址：" prop="unitDiZhi">
                 <el-input v-model="kaiPiao.unitDiZhi" ></el-input>
-              </el-form-item>
-              <el-form-item label="开户银行：" prop="unitYinHang">
+              </el-form-item> -->
+              <!-- <el-form-item label="开户银行：" prop="unitYinHang">
                 <el-input v-model="kaiPiao.unitYinHang" ></el-input>
-              </el-form-item>
+              </el-form-item> -->
             </div>
           </el-col>
           <el-col :span="12">
             <div class="grid-content bg-purple">
-              <el-form-item label="税 号：" prop="unitShuiHao">
+              <el-form-item label="类型：" prop="ziLiaoType">
+                <el-radio-group v-model="kaiPiao.ziLiaoType" :disabled="true">
+                  <el-radio label="沿用老资料" value="0"></el-radio>
+                  <el-radio label="新开票信息" value="1"></el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <!-- <el-form-item label="税 号：" prop="unitShuiHao">
                 <el-input v-model="kaiPiao.unitShuiHao" ></el-input>
               </el-form-item>
               <el-form-item label="电 话：" prop="unitTel">
@@ -220,7 +256,7 @@
               </el-form-item>
               <el-form-item label="账 号：" prop="unitZhangHao">
                 <el-input v-model="kaiPiao.unitZhangHao"></el-input>
-              </el-form-item>
+              </el-form-item> -->
             </div>
           </el-col>
         </el-row>
@@ -229,23 +265,56 @@
           <el-col :span="12">
             <div class="grid-content bg-purple">
               <el-form-item label="货物或应税劳务名称：" prop="laoWuMingCheng" label-width="160px">
-                <el-input v-model="kaiPiao.laoWuMingCheng" ></el-input>
+                <el-input v-model="kaiPiao.laoWuMingCheng" :disabled="true" ></el-input>
               </el-form-item>
               <el-form-item label="规格型号：" prop="guiGeXingHao">
-                <el-input v-model="kaiPiao.guiGeXingHao" ></el-input>
+                <el-input v-model="kaiPiao.guiGeXingHao" :disabled="true" ></el-input>
               </el-form-item>
               <el-form-item label="单 位：" prop="danWei">
-                <el-input v-model="kaiPiao.danWei" ></el-input>
+                <el-input v-model="kaiPiao.danWei"  :disabled="true"></el-input>
               </el-form-item>
             </div>
           </el-col>
           <el-col :span="12">
             <div class="grid-content bg-purple">
               <el-form-item label="数 量：" prop="shuLiang">
-                <el-input v-model="kaiPiao.shuLiang" ></el-input>
+                <el-input v-model="kaiPiao.shuLiang" :disabled="true"></el-input>
               </el-form-item>
               <el-form-item label="含税金额：" prop="jinE">
-                <el-input v-model="kaiPiao.jinE" ></el-input>
+                <el-input v-model="kaiPiao.jinE" :disabled="true"></el-input>
+              </el-form-item>
+              <el-form-item label="下载文件：" prop="danWei">
+                <template >
+                  <a :href="kaiPiao.wenJianUrl" download="w3logo" style="color:blue;">下载原文件</a>
+            </template>
+              </el-form-item>
+            </div>
+          </el-col>
+        </el-row>
+        <div style="width:100%;height:1px;border-top:1px solid;margin-bottom:15px;"></div>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <div class="grid-content bg-purple">
+              <el-form-item label="到款金额：" prop="faPiaoNum" label-width="160px">
+                <el-input v-model="kaiPiao.daoKuan" :disabled="true" ></el-input>
+              </el-form-item>
+              <el-form-item label="到款时间：" prop="remark">
+                <el-input v-model="kaiPiao.daoKuanTime"  :disabled="true"></el-input>
+              </el-form-item>
+            </div>
+          </el-col>
+          <el-col :span="12">
+            <div class="grid-content bg-purple">
+              <el-form-item label="是否付清：" prop="fuQing">
+                <el-switch v-model="kaiPiao.fuQing" :disabled="true"></el-switch>
+              </el-form-item>
+              <el-form-item label="付款方式：" prop="fuKuanType">
+                <el-radio-group v-model="kaiPiao.fuKuanType" :disabled="true">
+                  <el-radio label="现金" value="0"></el-radio>
+                  <el-radio label="汇票" value="1"></el-radio>
+                  <el-radio label="汇款" value="2"></el-radio>
+                  <el-radio label="支票" value="3"></el-radio>
+                </el-radio-group>
               </el-form-item>
             </div>
           </el-col>
@@ -255,25 +324,10 @@
           <el-col :span="12">
             <div class="grid-content bg-purple">
               <el-form-item label="发票号码：" prop="faPiaoNum" label-width="160px">
-                <el-input v-model="kaiPiao.faPiaoNum" ></el-input>
+                <el-input v-model="kaiPiao.faPiaoNum" :disabled="true" ></el-input>
               </el-form-item>
               <el-form-item label="备 注：" prop="remark">
-                <el-input v-model="kaiPiao.remark" ></el-input>
-              </el-form-item>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div class="grid-content bg-purple">
-              <el-form-item label="是否付清：" prop="fuQing">
-                <el-switch v-model="kaiPiao.fuQing" ></el-switch>
-              </el-form-item>
-              <el-form-item label="付款方式：" prop="fuKuanType">
-                <el-radio-group v-model="kaiPiao.fuKuanType" >
-                  <el-radio label="现金" value="0"></el-radio>
-                  <el-radio label="汇票" value="1"></el-radio>
-                  <el-radio label="汇款" value="2"></el-radio>
-                  <el-radio label="支票" value="3"></el-radio>
-                </el-radio-group>
+                <el-input v-model="kaiPiao.remark"  :disabled="true"></el-input>
               </el-form-item>
             </div>
           </el-col>
@@ -319,7 +373,8 @@ export default {
       dialogFormVisible2: false,
       dialogFormVisible: false,
       form: {},
-      kaiPiao: {},
+      kaiPiao: {
+      },
       tableLoading2: false,
       auditItem: "",
       activeName: 'first',

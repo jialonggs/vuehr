@@ -77,6 +77,11 @@
               <img class="image" v-bind:src="scope.row.picUrls[0]" style="height:30px;width:30px;">
             </template>
                 </el-table-column>
+                <el-table-column prop="" label="图片地址">
+                  <template slot-scope="scope">
+                <a :href="scope.row.picUrls[0]" target="_blank">点击查看</a>
+            </template>
+                </el-table-column>
                 <el-table-column prop="wenlidaima" label="纹理代码">
                 </el-table-column>
                 <el-table-column prop="productNum" label="数量">

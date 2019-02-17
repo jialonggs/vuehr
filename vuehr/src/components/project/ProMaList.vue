@@ -52,6 +52,13 @@
                   <el-tag v-if="scope.row.businessBaoJia.audit+'' === '1'" type="success">通过</el-tag>
           </template>
           </el-table-column>
+          <el-table-column label="开票状态">
+            <template slot-scope="scope">
+            <el-tag v-if="scope.row.kaiPiaoStatus +'' ==='0' && scope.row.businessBaoJia.audit+'' !== '1' " type="info">不可开票</el-tag>
+            <el-tag v-if="scope.row.kaiPiaoStatus +'' ==='0' && scope.row.businessBaoJia.audit+'' === '1' " type="success">待开票</el-tag>
+            <el-tag v-if="scope.row.kaiPiaoStatus+'' !== '0'" type="warning">开票完成</el-tag>
+          </template>
+          </el-table-column>
           <!-- <el-table-column prop="orderSchedule" label="订单进度">
             </el-table-column> -->
           <el-table-column label="创建时间">
@@ -620,6 +627,15 @@
         开票类型 :<el-tag v-if="itemKaiPiao.financeBiLi+'' !== '100'" type="warning">欠款开票</el-tag>
         <el-tag v-if="itemKaiPiao.financeBiLi+'' === '100'" type="success">到款开票</el-tag>
       </div>
+      <div style="margin-top:5px;">
+        到款比例 :<el-tag  type="warning">{{itemKaiPiao.financeBiLi}}</el-tag>
+      </div>
+      <div style="margin-top:5px;">
+        到款金额 :<el-tag  type="default">{{itemKaiPiao.financeJinE}}</el-tag>
+      </div>
+      <div style="margin-top:5px;">
+        最终优惠价:<el-tag  type="default">{{itemKaiPiao.businessBaoJia.finalBaoJia}}</el-tag>
+      </div>
       <div>
         <p>剩余开票金额: <el-tag type="danger">{{itemKaiPiao.needKaiPiao}}</el-tag></p>
       </div>
@@ -628,23 +644,51 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <div class="grid-content bg-purple">
-              <el-form-item label="合同页：" prop="heTongYe">
-                <el-input v-model="kaiPiao.heTongYe"></el-input>
-              </el-form-item>
-              <el-form-item label="名 称：" prop="unitName">
+              <el-form-item label="开票单位名称：" prop="unitName">
                 <el-input v-model="kaiPiao.unitName"></el-input>
               </el-form-item>
-              <el-form-item label="地 址：" prop="unitDiZhi">
-                <el-input v-model="kaiPiao.unitDiZhi"></el-input>
+              <el-form-item label="开票信息资料：">
+                <div>
+                  <vue-core-image-upload :crop="false" inputOfFile="imageFile" :url="upload" extensions="png,gif,jpeg,jpg" :class="['el-button', 'el-button--primary']" :max-file-size="5242880" :data="imageData" text="上传图片" :multiple="true" :multiple-size="30" credentials="true"
+                    @imageuploaded="imageuploaded" @errorhandle="handleError">
+                  </vue-core-image-upload>
+                </div>
               </el-form-item>
-              <el-form-item label="开户银行：" prop="unitYinHang">
-                <el-input v-model="kaiPiao.unitYinHang"></el-input>
-              </el-form-item>
+                <!-- <el-form-item label="合同页：" prop="heTongYe">
+                  <el-input v-model="kaiPiao.heTongYe"></el-input>
+                </el-form-item>
+                <el-form-item label="名 称：" prop="unitName">
+                  <el-input v-model="kaiPiao.unitName"></el-input>
+                </el-form-item>
+                <el-form-item label="地 址：" prop="unitDiZhi">
+                  <el-input v-model="kaiPiao.unitDiZhi"></el-input>
+                </el-form-item>
+                <el-form-item label="开户银行：" prop="unitYinHang">
+                  <el-input v-model="kaiPiao.unitYinHang"></el-input>
+                </el-form-item>  -->
+            </div>
+            <div v-if="imageUrls.length > 0" style="border: 1px dashed #d9d9d9;max-height:358px;margin-bottom:5px;">
+              <el-row :gutter="20" style="margin-top:10px;">
+                <el-col :span="6" v-for="imageUrl in imageUrls ">
+                  <el-card :body-style="{ padding: '0px' }" class="mould-card">
+                    <img class="image" v-bind:src="imageUrl" style="max-height:358px;">
+                    <div style="text-align:center;">
+                      <el-button type="text" @click="delMouldImage(imageUrl)"><i class="el-icon-error" style="color:red;"></i></el-button>
+                    </div>
+                  </el-card>
+                </el-col>
+              </el-row>
             </div>
           </el-col>
           <el-col :span="12">
             <div class="grid-content bg-purple">
-              <el-form-item label="税 号：" prop="unitShuiHao">
+              <el-form-item label="类型：" prop="ziLiaoType">
+                <el-radio-group v-model="kaiPiao.ziLiaoType">
+                  <el-radio label="沿用老资料" value="0"></el-radio>
+                  <el-radio label="新开票信息" value="1"></el-radio>
+                </el-radio-group>
+              </el-form-item>
+              <!-- <el-form-item label="税 号：" prop="unitShuiHao">
                 <el-input v-model="kaiPiao.unitShuiHao"></el-input>
               </el-form-item>
               <el-form-item label="电 话：" prop="unitTel">
@@ -652,7 +696,7 @@
               </el-form-item>
               <el-form-item label="账 号：" prop="unitZhangHao">
                 <el-input v-model="kaiPiao.unitZhangHao"></el-input>
-              </el-form-item>
+              </el-form-item> -->
             </div>
           </el-col>
         </el-row>
@@ -681,22 +725,41 @@
                 <!-- <el-input-number v-model="kaiPiao.jinE"></el-input-number> -->
                 <!-- <el-input v-model="kaiPiao.jinE"></el-input> -->
               </el-form-item>
+              <el-form-item label="上传文件：" >
+                <div v-show="wen_jian_url !== ''">
+                  <p style="color: blue;">上传成功</p>
+                </div>
+                <div v-show="wen_jian_url === ''">
+                    <vue-core-image-upload :class="['el-button', 'el-button--primary']"
+                    :crop="false"
+                     inputOfFile="imageFile"
+                     :url="upload"
+                    extensions="png,ppt,docx,txt,jpg,xlsx,pdf"
+                    :max-file-size="5242880"
+                    :data="wenjianData" text="上传文件"
+                    :multiple="true"
+                    :multiple-size="30"
+                    credentials="true"
+                    @imageuploaded="imageupwenjian" @errorhandle="handleError">
+                    </vue-core-image-upload>
+                </div>
+              </el-form-item>
             </div>
           </el-col>
         </el-row>
         <div style="width:100%;height:1px;border-top:1px solid;margin-bottom:15px;"></div>
         <el-row :gutter="20">
-          <el-col :span="12">
+          <!-- <el-col :span="12">
             <div class="grid-content bg-purple">
-              <el-form-item label="发票号码：" prop="faPiaoNum" label-width="160px">
+              <el-form-item label="到款时间：" prop="faPiaoNum" label-width="160px">
                 <el-input v-model="kaiPiao.faPiaoNum"></el-input>
               </el-form-item>
-              <el-form-item label="备 注：" prop="remark">
+              <el-form-item label="到款金额：" prop="remark">
                 <el-input v-model="kaiPiao.remark"></el-input>
               </el-form-item>
             </div>
-          </el-col>
-          <el-col :span="12">
+          </el-col> -->
+          <!-- <el-col :span="12">
             <div class="grid-content bg-purple">
               <el-form-item label="是否付清：" prop="isFuQing">
                 <el-switch v-model="kaiPiao.isFuQing"></el-switch>
@@ -710,7 +773,7 @@
                 </el-radio-group>
               </el-form-item>
             </div>
-          </el-col>
+          </el-col> -->
         </el-row>
       </el-form>
     </div>
@@ -723,9 +786,20 @@
 </div>
 </template>
 <script>
+import JLApiUtils from '../../utils/JLApiUtils.js';
+import VueCoreImageUpload from 'vue-core-image-upload';
 export default {
+  components: {
+    VueCoreImageUpload
+  },
   data() {
     return {
+      wen_jian_url:'',
+      upload:'',
+      wenjianData: {
+          userId: '',
+          imgPakage: 'yu_bao_jia'
+      },
       selec_car: '',
       cars: [],
       units: [],
@@ -750,6 +824,11 @@ export default {
           cilentCompanyName:''
         }
       },
+      imageData: {
+        userId: '',
+        imgPakage: 'sfm_shou'
+      },
+      imageUrls:[],
       nowTab: 1,
       username: '',
       name: '',
@@ -766,7 +845,9 @@ export default {
         addUserName: ''
       },
       currentPage: 1,
-      itemKaiPiao: {},
+      itemKaiPiao: {
+        "businessBaoJia":{}
+      },
       totalnum: 0,
       pagesize: 10,
       select_word: '',
@@ -809,6 +890,68 @@ export default {
     }
   },
   methods: {
+    // 上传图片失败
+    handleError() {
+      this.$notify.error({
+        title: '上传失败',
+        message: '图片上传出现异常'
+      });
+    },
+    delMouldImage(url) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.todelImage(url);
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+    },
+    todelImage(url) {
+      let self = this
+      if (url == 'undefined' || url.length == "") {
+        self.$message.error("删除图片不存在");
+        return
+      }
+      this.getRequest("/config/delfile/delImage?url=" + url).then(resp => {
+        if (resp && resp.status == 200 && resp.data.code == 0) {
+          self.$message.success("删除成功");
+          let urls = self.imageUrls;
+          let newUrls = [];
+          for (var i = 0; i < urls.length; i++) {
+            if (url != urls[i]) {
+              newUrls.push(urls[i])
+            }
+          }
+          self.imageUrls = newUrls;
+        } else {
+          self.$message.error("删除照片失败");
+        }
+      })
+    },
+    imageuploaded(data) {
+      let self = this;
+      if (data.url.length !== 'undefined' && data.url.length > 0) {
+        let url = data.url
+        let urls = self.imageUrls;
+        for (var i = 0; i < url.length; i++) {
+          urls.push(url[i]);
+        }
+        self.imageUrls = urls;
+      }
+    },
+    imageupwenjian(data) {
+      this.$message.success("上传成功");
+      let urls = [];
+      urls = data.url;
+      if(urls != 'undefinded' && urls.length > 0 ){
+        this.wen_jian_url = urls[0];
+      }
+    },
     toAddOrder(){
       this.$router.push('/order/add')
     },
@@ -856,6 +999,7 @@ export default {
         projectName: '',
         addUserId: '',
         addUserName: '',
+        wenJianUrl:''
       };
       self.itemKaiPiao = item;
     },
@@ -867,12 +1011,25 @@ export default {
         this.$message.error("开票金额有误")
         return;
       }
+      let url = "";
+      for (var i = 0; i < self.imageUrls.length; i++) {
+        if (i == self.imageUrls.length - 1) {
+          url = url + self.imageUrls[i]
+        } else {
+          url = self.imageUrls[i] + "|" + url
+        }
+      }
+      parmas.xinXiUrl = url;
       parmas.projectId = self.itemKaiPiao.id;
       parmas.projectName = self.itemKaiPiao.projectName;
       parmas.addUserId = this.uid;
       parmas.addUserName = this.name;
-      console.log(parmas);
-      return;
+      parmas.wenJianUrl = this.wen_jian_url;
+
+      parmas.financeBiLi = itemKaiPiao.financeBiLi;
+      parmas.financeJinE = itemKaiPiao.financeJinE;
+      parmas.finalBaoJia = itemKaiPiao.businessBaoJia.finalBaoJia;
+      parmas.needKaiPiao = itemKaiPiao.businessBaoJia.needKaiPiao;
       self.tableLoading2 = true;
       this.postRequest("/kai/piao/add", parmas).then(resp => {
         self.tableLoading2 = false;
@@ -985,6 +1142,8 @@ export default {
     this.username = localStorage.getItem('cp_username');
     this.uid = localStorage.getItem('cp_uid');
     this.name = localStorage.getItem('cp_name');
+    this.wenjianData.userId = this.uid = localStorage.getItem('cp_uid');
+    this.upload = JLApiUtils.upload;
   },
   watch: {　　　　　　　　
     selec_car(curVal, oldVal) {
