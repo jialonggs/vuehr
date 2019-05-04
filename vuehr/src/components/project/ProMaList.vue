@@ -56,7 +56,8 @@
             <template slot-scope="scope">
             <el-tag v-if="scope.row.kaiPiaoStatus +'' ==='0' && scope.row.businessBaoJia.audit+'' !== '1' " type="info">不可开票</el-tag>
             <el-tag v-if="scope.row.kaiPiaoStatus +'' ==='0' && scope.row.businessBaoJia.audit+'' === '1' " type="success">待开票</el-tag>
-            <el-tag v-if="scope.row.kaiPiaoStatus+'' !== '0'" type="warning">开票完成</el-tag>
+            <el-tag v-if="scope.row.kaiPiaoStatus +'' ==='1' && scope.row.businessBaoJia.audit+'' === '1' " type="success">开票中</el-tag>
+            <el-tag v-if="scope.row.kaiPiaoStatus+'' ==='2'" type="warning">开票完成</el-tag>
           </template>
           </el-table-column>
           <!-- <el-table-column prop="orderSchedule" label="订单进度">
@@ -73,7 +74,7 @@
               type="primary"
               @click="xiangQing(scope.row)">详情</el-button>
               <el-button
-                v-if="scope.row.kaiPiaoStatus +'' ==='0' && scope.row.businessBaoJia.audit+'' === '1'"
+                v-if="scope.row.kaiPiaoStatus +'' !=='2' && scope.row.businessBaoJia.audit+'' === '1'"
                 size="mini"
                 type="primary"
                 @click="toKaiPiao(scope.row)">开票</el-button>
@@ -585,7 +586,7 @@
       <el-form ref="projectfrom" :model="projectfrom" :rules="rules" label-width="120px">
         <el-form-item label="选择车型:" prop="carId">
           <template>
-    <el-select v-model="selec_car" clearable placeholder="请选择">
+    <el-select v-model="selec_car" filterable  placeholder="请选择">
       <el-option
         v-for="item in cars"
         :key="item.value"
@@ -597,7 +598,7 @@
         </el-form-item>
         <el-form-item label="选择客户单位:" prop="unitId">
           <template>
-    <el-select v-model="projectfrom.unitId" clearable placeholder="请选择">
+    <el-select v-model="projectfrom.unitId" filterable  placeholder="请选择">
       <el-option
         v-for="item in units"
         :key="item.value"
@@ -647,13 +648,10 @@
               <el-form-item label="开票单位名称：" prop="unitName">
                 <el-input v-model="kaiPiao.unitName"></el-input>
               </el-form-item>
-              <el-form-item label="开票信息资料：">
-                <div>
-                  <vue-core-image-upload :crop="false" inputOfFile="imageFile" :url="upload" extensions="png,gif,jpeg,jpg" :class="['el-button', 'el-button--primary']" :max-file-size="5242880" :data="imageData" text="上传图片" :multiple="true" :multiple-size="30" credentials="true"
-                    @imageuploaded="imageuploaded" @errorhandle="handleError">
-                  </vue-core-image-upload>
-                </div>
+              <el-form-item label="欠款开票原因：" prop="shangWuRemark">
+                <el-input v-model="kaiPiao.shangWuRemark"></el-input>
               </el-form-item>
+
                 <!-- <el-form-item label="合同页：" prop="heTongYe">
                   <el-input v-model="kaiPiao.heTongYe"></el-input>
                 </el-form-item>
@@ -687,6 +685,13 @@
                   <el-radio label="沿用老资料" value="0"></el-radio>
                   <el-radio label="新开票信息" value="1"></el-radio>
                 </el-radio-group>
+              </el-form-item>
+              <el-form-item label="开票信息资料：">
+                <div>
+                  <vue-core-image-upload :crop="false" inputOfFile="imageFile" :url="upload" extensions="png,gif,jpeg,jpg" :class="['el-button', 'el-button--primary']" :max-file-size="5242880" :data="imageData" text="上传图片" :multiple="true" :multiple-size="30" credentials="true"
+                    @imageuploaded="imageuploaded" @errorhandle="handleError">
+                  </vue-core-image-upload>
+                </div>
               </el-form-item>
               <!-- <el-form-item label="税 号：" prop="unitShuiHao">
                 <el-input v-model="kaiPiao.unitShuiHao"></el-input>
@@ -1001,6 +1006,8 @@ export default {
         addUserName: '',
         wenJianUrl:''
       };
+      this.wen_jian_url = "";
+      self.imageUrls = [];
       self.itemKaiPiao = item;
     },
     addKaiPiao() {
@@ -1026,10 +1033,10 @@ export default {
       parmas.addUserName = this.name;
       parmas.wenJianUrl = this.wen_jian_url;
 
-      parmas.financeBiLi = itemKaiPiao.financeBiLi;
-      parmas.financeJinE = itemKaiPiao.financeJinE;
-      parmas.finalBaoJia = itemKaiPiao.businessBaoJia.finalBaoJia;
-      parmas.needKaiPiao = itemKaiPiao.businessBaoJia.needKaiPiao;
+      parmas.financeBiLi = self.itemKaiPiao.financeBiLi;
+      parmas.financeJinE = self.itemKaiPiao.financeJinE;
+      parmas.finalBaoJia = self.itemKaiPiao.businessBaoJia.finalBaoJia;
+      parmas.needKaiPiao = self.itemKaiPiao.needKaiPiao;
       self.tableLoading2 = true;
       this.postRequest("/kai/piao/add", parmas).then(resp => {
         self.tableLoading2 = false;

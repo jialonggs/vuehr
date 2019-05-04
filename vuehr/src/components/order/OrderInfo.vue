@@ -87,8 +87,8 @@
                     <el-form-item label="加工类型：" prop="machiningType">
                       <el-autocomplete class="inline-input" v-model="ruleForm.machiningType" :fetch-suggestions="querySearch" placeholder="请输入加工类型" @select="handleSelect"></el-autocomplete>
                     </el-form-item>
-                    <el-form-item label="加工面积：" prop="realityArea">
-                      <el-input-number v-model="ruleForm.realityArea" controls-position="right" :min="0"></el-input-number>
+                    <el-form-item label="加工面积：" prop="realityArea" >
+                      <el-input-number v-model="ruleForm.realityArea" :disabled="true" controls-position="right" :min="0"></el-input-number>
                     </el-form-item>
                     <el-form-item label="倍数：" prop="beiShu">
                       <el-input-number v-model="ruleForm.beiShu" controls-position="right" :min="1"></el-input-number>
@@ -104,12 +104,12 @@
               </div>
             </el-form>
             <div style="margin-bottom:15px;">
-              <el-card class="box-card" style="margin-top:25px;" v-loading="table_loading">
+              <el-card class="box-card" style="margin-top:25px;">
                 <div slot="header" class="clearfix">
                   <span>纹理列表</span>
-                  <!-- <div class="card-bottom" > -->
-                    <!-- <el-button type="primary" style="float:right"class="el-icon-plus" @click="toAddWenLi">添加</el-button> -->
-                  <!-- </div> -->
+                  </div>
+                <div>
+                  <el-button type="primary" style="float:right"class="el-icon-plus" @click="toAddWenLi">添加</el-button>
                 </div>
                 <div>
                   <el-table :data="wenliData" border show-summary style="width: 100%">
@@ -121,13 +121,13 @@
                     </el-table-column>
                     <el-table-column fixed="right" label="操作" width="300">
                       <template slot-scope="scope">
-           <!-- <el-button type="text" size="small" @click.native.prevent="toEidtor(scope.$index, productData)">编辑</el-button> -->
-           <!-- <el-button
-             @click.native.prevent="deleteRow(scope.$index, wenliData)"
+                        <el-button type="text" size="small" @click.native.prevent="toEidtor(scope.row)">编辑</el-button>
+           <el-button
+             @click.native.prevent="deleteRow(scope.row)"
              type="text"
              size="small">
              移除
-           </el-button> -->
+           </el-button>
          </template>
                     </el-table-column>
                   </el-table>
@@ -141,16 +141,38 @@
                     <el-input v-model="elform1.wenliName" style="width:30%;" placeholder="请输入纹理代码"></el-input>
                   </el-form-item>
                   <el-form-item label="倍数：" prop="times">
-                    <el-input-number v-model="elform1.times" controls-position="right" :min="1"></el-input-number>
+                    <el-input v-model="elform1.times" style="width:30%;" controls-position="right" ></el-input>
                   </el-form-item>
-                  <el-form-item label="加工面积：" prop="area">
-                    <el-input-number v-model="elform1.area" controls-position="right" :min="0"></el-input-number>
+                  <el-form-item label="加工面积：" prop="area" :disabled="true">
+                    <el-input-number v-model="elform1.area"  controls-position="right" :min="0"></el-input-number>
                   </el-form-item>
                 </el-form>
+                <span style="color:red">面积不能为0，请填写大于0的数字</span>
                 <div slot="footer" class="dialog-footer">
-                  <el-button type="primary"  @click="addWenLi()">确 定</el-button>
-                  <el-button type="primary" v-show="udapteBoolean" @click="toUpdateProduct">更 新</el-button>
+                  <!-- <el-button type="primary"  @click="addWenLi()">确 定</el-button> -->
+                  <el-button type="primary" @click="toUpdateWenLi()">更 新</el-button>
                   <el-button @click="chanel">取 消</el-button>
+                </div>
+              </el-dialog>
+            </div>
+            <div>
+              <el-dialog width="60%" title="纹理详情" :visible.sync="innerVisible2" :close-on-click-modal="false" append-to-body>
+                <el-form ref="elform2" :model="elform2" :rules="rules" label-width="120px" style="width:100%;">
+                  <el-form-item label="纹理名称：" prop="wenliName">
+                    <el-input v-model="elform2.wenliName" style="width:30%;" placeholder="请输入纹理代码"></el-input>
+                  </el-form-item>
+                  <el-form-item label="倍数：" prop="times">
+                    <el-input v-model="elform2.times" style="width:30%;" controls-position="right" ></el-input>
+                  </el-form-item>
+                  <el-form-item label="加工面积：" prop="area">
+                    <el-input-number v-model="elform2.area"  controls-position="right" :min="0"></el-input-number>
+                  </el-form-item>
+                </el-form>
+                <span style="color:red">面积不能为0，请填写大于0的数字</span>
+                <div slot="footer" class="dialog-footer">
+                  <!-- <el-button type="primary"  @click="addWenLi()">确 定</el-button> -->
+                  <el-button type="primary" @click="addWenLi()">添 加</el-button>
+                  <el-button @click="chanelAdd()">取 消</el-button>
                 </div>
               </el-dialog>
             </div>
@@ -413,6 +435,12 @@ export default {
         area:'0',
         times:'1'
       },
+      elform2:{
+        wenliName:'',
+        area:'0',
+        times:'1'
+      },
+      innerVisible2:false,
       innerVisible1:false,
       urgencyDisable: false,
       changeUrgency:{
@@ -528,36 +556,97 @@ export default {
     }
   },
   methods: {
+    addWenLi(){
+      let times = this.elform2.times
+      let area = this.elform2.area
+      if (times=='undefined' || times <=0) {
+        this.$message.error("请正确填写倍数")
+        return;
+      }
+      if (area=='undefined' || area<=0) {
+        this.$message.error("请正确填写面积")
+        return;
+      }
+      this.elform2.orderId = this.urlId;
+      this.jsonPostRequest("/order/list/add/wenli",this.elform2).then(resp => {
+        this.innerVisible2 = false;
+        if (resp && resp.status == 200 && resp.data.code == 0) {
+          this.$message.success("添加成功");
+          this.getOrderInfo(this.urlId);
+        } else {
+          this.$message.error("添加失败");
+        }
+      })
+
+    },
+    chanelAdd(){
+      this.innerVisible2 = false;
+    },
+    toEidtor(itemWenLi){
+      this.elform1 = itemWenLi;
+      this.innerVisible1 = true;
+    },
+    toUpdateWenLi(){
+      let times = this.elform1.times
+      let area = this.elform1.area
+      if (times=='undefined' || times <=0) {
+        this.$message.error("请正确填写倍数")
+        return;
+      }
+      if (area=='undefined' || area<=0) {
+        this.$message.error("请正确填写面积")
+        return;
+      }
+      this.jsonPostRequest("/order/list/update/wenli",this.elform1).then(resp => {
+        if (resp && resp.status == 200 && resp.data.code == 0) {
+          this.$message.success("修改成功");
+          this.chanel();
+          this.getOrderInfo(this.urlId);
+        } else {
+          this.$message.error("修改失败");
+        }
+      })
+    },
     chanel(){
-      this.innerVisible = false;
+      this.innerVisible1 = false;
       this.elform1 = {
         wenliName:'',
         area:'0',
         times:'1'
       }
     },
-    addWenLi() {
-      let self = this;
-      let wenli = {
-        wenliName: this.elform1.wenliName,
-        times: this.elform1.times,
-        area: this.elform1.area,
-        addUserId: this.uid,
-        addUserName: this.name
-      }
-      self.wenliData.push(wenli);
-      self.elform1 = {
-          wenliName:'',
-          area:'0',
-          times:'1'
-        },
-      self.innerVisible1 = false;
-    },
     toAddWenLi(){
-      this.innerVisible1 = true;
+      this.elform1 = {
+        wenliName:'',
+        area:'0',
+        times:'1'
+      }
+      this.innerVisible2 = true;
+
     },
-    deleteRow(index, rows) {
-       rows.splice(index, 1);
+    deleteRow(item) {
+      this.$confirm('此操作将永久移除纹理, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.toDeleteRow(item);
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+    },
+    toDeleteRow(item) {
+      this.jsonPostRequest("/order/list/del/wenli", item).then(resp => {
+        if (resp && resp.status == 200 && resp.data.code == 0) {
+          this.$message.success("移除成功");
+          this.getOrderInfo(this.urlId);
+        } else {
+          this.$message.error("移除失败");
+        }
+      })
      },
     changeUrgency1(){
       this.urgencyDisable = true;

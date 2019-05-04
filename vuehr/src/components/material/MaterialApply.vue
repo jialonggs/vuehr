@@ -25,6 +25,9 @@
                 <el-form-item label="纹理编号：" prop="wuLiaoName">
                   <el-input v-model="form.wuLiaoName" style="width:40%"></el-input>
                 </el-form-item>
+                <el-form-item label="花纹层次：" prop="wenliChengCi">
+                  <el-input v-model="form.wenliChengCi" style="width:40%"></el-input>
+                </el-form-item>
                 <el-form-item label="数量：" prop="wuLiaoNum">
                   <el-input-number v-model="form.wuLiaoNum" controls-position="right" @change="handleChange" :min="1"></el-input-number>
                 </el-form-item>
@@ -91,6 +94,7 @@ export default {
         orderId: '',
         wuLiaoNum: '1',
         wuLiaoName: '',
+        wenliChengCi: '',
         liaoJiang:'',
         remark: '',
         songTime: new Date(),
@@ -100,6 +104,18 @@ export default {
         wuLiaoName: [{
             required: true,
             message: '请输入订单名称',
+            trigger: 'blur'
+          },
+          {
+            min: 1,
+            max: 255,
+            message: '长度在 0 到 255 个字符',
+            trigger: 'blur'
+          }
+        ],
+        wenliChengCi: [{
+            required: true,
+            message: '请输入纹理层次',
             trigger: 'blur'
           },
           {

@@ -174,7 +174,7 @@ export default {
       },
       imageUrls: [],
       ruleForm: {
-        tax: '17',
+        tax: '13',
         addUserId: '',
         addUserName: ''
       },

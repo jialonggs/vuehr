@@ -128,6 +128,7 @@ export default {
       this.dialogFormVisible = true;
       this.enginefrom = item;
       this.updateflag = true;
+      this.addloading = false;
     },
     toadd(){
       this.dialogFormVisible = true;
@@ -152,7 +153,6 @@ export default {
       let data = {
         name : name
       }
-
       this.postRequest("/engine/checkEngineName", data).then(resp => {
         if (resp && resp.status == 200 && resp.data.code == 0) {
           let engine = resp.data.data.engine;

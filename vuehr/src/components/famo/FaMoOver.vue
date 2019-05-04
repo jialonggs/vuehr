@@ -27,13 +27,14 @@
             <el-tag type="warning" v-if="scope.row.faMoType+'' === '2'" >全款发模</el-tag>
         </template>
           </el-table-column>
-          <el-table-column label="审核状态">
+          <el-table-column label="状态">
             <template slot-scope="scope">
             <el-tag type="info" v-if="scope.row.status+'' === '0'" >待审核</el-tag>
             <el-tag type="success" v-if="scope.row.status+'' === '1'" >商务审核通过</el-tag>
             <el-tag type="warning" v-if="scope.row.status+'' === '-1'" >商务审核未通过</el-tag>
             <el-tag type="success" v-if="scope.row.status+'' === '2'" >经理审核通过</el-tag>
             <el-tag type="danger" v-if="scope.row.status+'' === '-2'" >经理审核未通过</el-tag>
+            <el-tag type="success" v-if="scope.row.status+'' === '3'" >发模完成</el-tag>
         </template>
           </el-table-column>
           <el-table-column label="发模数量">
@@ -56,12 +57,16 @@
             <template slot-scope="scope">{{ scope.row.createTime | formatDateTime}}</template>
           </el-table-column>
           <el-table-column label="操作">
-            <template slot-scope="scope">
+          <template slot-scope="scope">
             <el-button
               size="mini"
               type="primary"
-              @click="toAddFaMoInfo(scope.row.id)">填写发模单</el-button>
-          </template>
+              @click="toAddFaMoInfo(scope.row)">发模</el-button>
+          <el-button
+            size="mini"
+            type="primary"
+            @click="toSeeShouMo(scope.row)">查看</el-button>
+        </template>
           </el-table-column>
         </el-table>
       </el-main>
@@ -74,14 +79,14 @@
   <el-button type="danger" size="mini" v-if="tableData.length>0" :disabled="multipleSelection.length==0" @click="deleteManyEmps">批量发模
   </el-button>
   <!-- 发模申请 -->
-  <el-dialog title="发模单" :visible.sync="dialogFormVisible" width='40%' v-loading="tableLoading">
+  <el-dialog title="发模单" :visible.sync="dialogFormVisible" width='60%' v-loading="tableLoading">
     <div class="form-box">
       <el-form ref="form" :model="form" label-width="120px">
         <el-form-item label="车牌号：" prop="chePai">
-            <el-input v-model="form.chePai" ></el-input>
+            <el-input v-model="form.chePai" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="驾驶员：" prop="jiaShiYuan">
-          <el-input v-model="form.jiaShiYuan" ></el-input>
+        <el-form-item label="驾驶员手机号：" prop="jiaShiYuan">
+          <el-input v-model="form.jiaShiYuan" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="运输情况：">
           <el-checkbox-group v-model="form.kuaiDi">
@@ -100,6 +105,25 @@
         <el-form-item label="备注：" prop="remark" >
           <el-input type="textarea" v-model="form.remark"></el-input>
         </el-form-item>
+        <el-form-item label="上传图片：">
+          <div>
+            <vue-core-image-upload :crop="false" inputOfFile="imageFile" :url="upload" extensions="png,gif,jpeg,jpg" :class="['el-button', 'el-button--primary']" :max-file-size="5242880" :data="imageData" text="上传图片" :multiple="true" :multiple-size="30" credentials="true"
+              @imageuploaded="imageuploaded" @errorhandle="handleError">
+            </vue-core-image-upload>
+          </div>
+        </el-form-item>
+        <div style="border: 1px dashed #d9d9d9;width:100%;min-height:358px;">
+          <el-row :gutter="20" style="margin-top:10px;">
+            <el-col :span="6" v-for="imageUrl in imageUrls ">
+              <el-card :body-style="{ padding: '0px' }" class="mould-card">
+                <img class="image" v-bind:src="imageUrl" style="height:420px;">
+                <div style="text-align:center;">
+                  <el-button type="text" @click="delMouldImage(imageUrl)"><i class="el-icon-error" style="color:red;"></i></el-button>
+                </div>
+              </el-card>
+            </el-col>
+          </el-row>
+        </div>
       </el-form>
     </div>
     <div slot="footer" class="dialog-footer">
@@ -107,12 +131,42 @@
       <el-button @click="quxiao">取 消</el-button>
     </div>
   </el-dialog>
+  <el-dialog title="模具详情" :visible.sync="dialogFormVisible3" width='80%' v-loading="tableLoading">
+  <el-card class="box-card" :index="index" v-for="(list, index) in this.mouldData" style="margin-top:25px;">
+    <div slot="header" class="clearfix">
+      <span>{{list.mouldName}}---模具信息</span>
+    </div>
+    <div class="form-box">
+        <div>
+          <span>数量：{{list.mouldNum}}</span>
+        </div>
+        <div>
+          <span>备注：{{list.remark}}</span>
+        </div>
+    </div>
+    <div style="border: 1px dashed #d9d9d9;width:100%;min-height:358px;">
+      <el-row :gutter="20" style="margin-top:10px;">
+        <el-col :span="6" v-for="item1 in list.picUrls ">
+          <el-card :body-style="{ padding: '0px' }" class="mould-card">
+            <img class="image" v-bind:src="item1" style="height:420px;">
+          </el-card>
+        </el-col>
+      </el-row>
+    </div>
+  </el-card>
+  </el-dialog>
 </div>
 </template>
 <script>
+import VueCoreImageUpload from 'vue-core-image-upload';
+import JLApiUtils from '../../utils/JLApiUtils.js';
 export default {
+  components: {
+    VueCoreImageUpload
+  },
   data() {
     return {
+      imageUrls:[],
       multipleSelection: [],
       itemQianKuan: {},
       kaiPiao: {
@@ -121,6 +175,7 @@ export default {
       },
       form: {},
       form1: {},
+      dialogFormVisible3:false,
       dialogFormVisible1: false,
       dialogFormVisible: false,
       dialogFormVisible2: false,
@@ -138,10 +193,45 @@ export default {
       itemRuKu: {},
       tableLoading: false,
       itemKaiPiao: {},
-      itemId:''
+      itemId:'',
+      mouldData:[],
+      imageData:[],
+      upload:'',
     }
   },
   methods: {
+    delMouldImage(url) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.todelImage(url);
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
+    },
+    imageuploaded(data) {
+      let self = this;
+      if (data.url.length !== 'undefined' && data.url.length > 0) {
+        let url = data.url
+        let urls = self.imageUrls;
+        for (var i = 0; i < url.length; i++) {
+          urls.push(url[i]);
+        }
+        self.imageUrls = urls;
+      }
+    },
+    // 上传图片失败
+    handleError() {
+      this.$notify.error({
+        title: '上传失败',
+        message: '图片上传出现异常'
+      });
+    },
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },
@@ -162,12 +252,40 @@ export default {
         this.toAddFaMoInfo();
       }).catch(() => {});
     },
+    toSeeShouMo(item){
+      let orderId = item.orderId;
+      this.getRequest("/fa/mo/order/famo?orderId=" + orderId).then(resp => {
+        if (resp && resp.status == 200 && resp.data.code == 0) {
+          //this.$message.success("执行成功")
+          let mouldInfos = resp.data.data;
+          let productItem = [];
+          if ('undefined' != mouldInfos && mouldInfos.length > 0) {
+            for (var i = 0; i < mouldInfos.length; i++) {
+                let picUrls = [];
+                let item = {}
+                item = mouldInfos[i]
+                var te = this.$options.filters['splitUrl'];
+                picUrls = te(mouldInfos[i].picUrls)
+                item.picUrls = picUrls;
+                productItem.push(item);
+              }
+            }
+            this.mouldData = productItem;
+            this.dialogFormVisible3 = true;
+        } else {
+          this.$message.error("获取收模信息失败")
+        }
+      })
+
+    },
     toAddFaMoInfo(item) {
       if(item != null && item !== '' && item !== 'undefined'){
-        this.itemId = item;
+        this.itemId = item.id;
       }
       this.dialogFormVisible = true;
       this.form = {};
+      this.form.chePai = item.chePai;
+      this.form.jiaShiYuan = item.driverPhone;
     },
     addFaMoInfo() {
       let self = this;
@@ -184,6 +302,15 @@ export default {
       self.form.addUserName=this.name;
       self.form.addUserId = this.uid;
 
+      let url = "";
+      for (var i = 0; i < self.imageUrls.length; i++) {
+        if (i == self.imageUrls.length - 1) {
+          url = url + self.imageUrls[i]
+        } else {
+          url = self.imageUrls[i] + "|" + url
+        }
+      }
+      self.form.picUrls = url;
       this.postRequest("/fa/mo/add/info", self.form).then(resp => {
         if (resp && resp.status == 200 && resp.data.code == 0) {
           this.$message.success("执行成功")
@@ -222,11 +349,13 @@ export default {
         _this.tableLoading = false;
         if (resp && resp.status == 200 && resp.data.code == 0) {
           _this.tableData = resp.data.data.needfamolist
-          console.log(this.tableData);
           _this.totalnum = resp.data.data.count
         }
       })
     }
+  },
+  created: function(){
+    this.upload = JLApiUtils.upload;
   },
   mounted: function() {
     this.$nextTick(function() {

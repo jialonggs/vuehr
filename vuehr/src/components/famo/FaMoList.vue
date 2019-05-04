@@ -65,10 +65,11 @@
               size="mini"
               type="primary"
               @click="tofaMo(scope.row)">发模</el-button>
-              <el-button v-if="scope.row.project.financeStatus+'' === '2' || scope.row.project.financeStatus+'' === '1'"
+              <el-button
                 size="mini"
                 type="danger"
-                @click="toqianKuan(scope.row)">发模</el-button>
+                v-if="scope.row.project.financeStatus+'' !== '3'"
+                @click="toqianKuan(scope.row)" >发模</el-button>
                 <!-- <el-button
                   v-if="scope.row.project.kaiPiaoStatus +'' ==='0'"
                   size="mini"
@@ -91,8 +92,24 @@
   <!-- 发模申请 -->
   <el-dialog title="欠款发模申请" :visible.sync="dialogFormVisible" width='40%' v-loading="tableLoading">
     <div class="form-box">
+      <div style="margin-top:5px;">
+        到款比例 :<el-tag  type="warning">{{itemProject.financeBiLi}}</el-tag>
+      </div>
+      <div style="margin-top:5px;">
+        到款金额 :<el-tag  type="default">{{itemProject.financeJinE}}</el-tag>
+      </div>
+      <div style="margin-top:5px;">
+        最终优惠价:<el-tag  type="default">{{itemProject.finalBaoJia}}</el-tag>
+      </div>
+      <div style="width:100%;height:1px;border-top:1px solid;margin-bottom:15px;"></div>
       <el-form ref="form" :model="form" label-width="120px" >
-        <el-form-item label="是否有等额模具留厂：" prop="liuChang">
+        <el-form-item label="车牌号:" prop="chePai">
+          <el-input v-model="form.chePai" ></el-input>
+        </el-form-item>
+        <el-form-item label="驾驶员手机号:" prop="driverPhone">
+          <el-input v-model="form.driverPhone" ></el-input>
+        </el-form-item>
+        <el-form-item label="留厂等额模具：" prop="liuChang">
           <el-switch v-model="form.liuChang"></el-switch>
         </el-form-item>
         <el-form-item label="发模数量：" prop="faMoNum">
@@ -104,6 +121,9 @@
         <el-form-item label="欠款原因：" prop="faMoRemark" required>
           <el-input type="textarea" v-model="form.faMoRemark"></el-input>
         </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input type="textarea" v-model="form.remark"></el-input>
+        </el-form-item>
       </el-form>
     </div>
     <div slot="footer" class="dialog-footer">
@@ -111,9 +131,15 @@
       <el-button  @click="quxiao">取 消</el-button>
     </div>
   </el-dialog>
-  <el-dialog title="正常发模申请" :visible.sync="dialogFormVisible1" width='40%' v-loading="tableLoading">
+  <el-dialog title="全款发模申请" :visible.sync="dialogFormVisible1" width='40%' v-loading="tableLoading">
     <div class="form-box">
       <el-form ref="form" :model="form1" label-width="120px" >
+        <el-form-item label="车牌号:" prop="chePai">
+          <el-input v-model="form1.chePai" ></el-input>
+        </el-form-item>
+        <el-form-item label="驾驶员手机号:" prop="driverPhone">
+          <el-input v-model="form1.driverPhone" ></el-input>
+        </el-form-item>
         <el-form-item label="是否有等额模具留厂：" prop="liuChang">
           <el-switch v-model="form1.liuChang"></el-switch>
         </el-form-item>
@@ -250,6 +276,7 @@ export default {
       itemRuKu:{},
       tableLoading: false,
       itemKaiPiao:{},
+      itemProject:{},
     }
   },
   methods: {
@@ -292,6 +319,7 @@ export default {
       this.dialogFormVisible1 = false;
     },
     toqianKuan(item){
+      this.itemProject = item.project
       this.itemQianKuan = item;
       this.dialogFormVisible = true;
       this.form = {
@@ -323,17 +351,17 @@ export default {
     },
     zhengchang(){
       let self = this;
-      self.form.addUserId = this.uid;
-      self.form.addUserName = this.name;
-      self.form.orderId = this.itemQianKuan.id;
-      self.form.orderName = this.itemQianKuan.orderName;
-      self.form.faMoType = '2';
+      self.form1.addUserId = this.uid;
+      self.form1.addUserName = this.name;
+      self.form1.orderId = this.itemQianKuan.id;
+      self.form1.orderName = this.itemQianKuan.orderName;
+      self.form1.faMoType = '2';
       self.tableLoading = true;
-      this.postRequest("/fa/mo/add", self.form).then(resp => {
+      this.postRequest("/fa/mo/add", self.form1).then(resp => {
         self.tableLoading = false;
         if (resp && resp.status == 200 && resp.data.code == 0) {
           this.$message.success("执行成功")
-          this.dialogFormVisible = false;
+          this.dialogFormVisible1 = false;
           this.getCollectMouldList()
         }else {
           this.$message.error("执行失败")
@@ -350,13 +378,13 @@ export default {
       self.form.addUserName = this.name;
       self.form.orderId = this.itemQianKuan.id;
       self.form.orderName = this.itemQianKuan.orderName;
-      self.form.faMoType = '1';
+      self.form.faMoType = '0';
       self.tableLoading = true;
       this.postRequest("/fa/mo/add", self.form).then(resp => {
         self.tableLoading = false;
         if (resp && resp.status == 200 && resp.data.code == 0) {
           this.$message.success("执行成功")
-          this.dialogFormVisible1 = false;
+          this.dialogFormVisible = false;
           this.getCollectMouldList()
         }else {
           this.$message.error("执行失败")
@@ -391,7 +419,6 @@ export default {
     "&storageStatus=2" +"&faMoStatus=0" ).then(resp => {
         _this.tableLoading = false;
         if (resp && resp.status == 200 && resp.data.code == 0) {
-          console.log(resp);
           _this.tableData = resp.data.data.needfamolist
           _this.totalnum = resp.data.data.count
         }

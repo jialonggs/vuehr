@@ -49,8 +49,10 @@
                 <template slot-scope="scope">
                   <el-tag v-if="scope.row.afterStatus+'' === '0' || scope.row.afterStatus+'' === '1' && scope.row.shouHou.status+'' ==='0' " type="primary">待申请售后</el-tag>
                   <el-tag v-if="scope.row.afterStatus+'' === '2' && scope.row.shouHou.status+'' ==='1'" type="primary">待分配</el-tag>
-                  <el-tag v-if="scope.row.shouHou.status+'' === '2' " type="primary">进行中</el-tag>
-                  <el-tag v-if="scope.row.shouHou.status+'' === '3' " type="primary">完成</el-tag>
+                  <el-tag v-if="scope.row.shouHou.status+'' === '2' " type="primary">待补充行政单</el-tag>
+                  <el-tag v-if="scope.row.shouHou.status+'' === '3' " type="primary">待审核行政单</el-tag>
+                  <el-tag v-if="scope.row.shouHou.status+'' === '4' " type="primary">进行中</el-tag>
+                  <el-tag v-if="scope.row.shouHou.status+'' === '5' " type="primary">完成</el-tag>
             </template>
               </el-table-column>
               <el-table-column label="操作">
@@ -85,14 +87,14 @@
         <el-row :gutter="20">
        <el-col :span="12"><div class="grid-content bg-purple">
          <el-form-item label="客户单位：" prop="danwei">
-           <el-input v-model="shouHouOrder.danwei" ></el-input>
+           <el-input v-model="shouHouOrder.danwei" :disabled="true"></el-input>
          </el-form-item>
          <el-form-item label="前往地址：" prop="address">
-           <el-input v-model="shouHouOrder.address" ></el-input>
+           <el-input v-model="shouHouOrder.address" :disabled="true"></el-input>
          </el-form-item>
-         <el-form-item label="售后人员：" prop="shouHouMan">
+         <!-- <el-form-item label="售后人员：" prop="shouHouMan">
             <el-input v-model="shouHouOrder.shouHouMan" ></el-input>
-         </el-form-item>
+         </el-form-item> -->
        </div></el-col>
        <el-col :span="12"><div class="grid-content bg-purple">
          <el-form-item label="联系人：" prop="contactUser">
@@ -101,27 +103,33 @@
          <el-form-item label="联系电话：" prop="contactPhone">
            <el-input v-model="shouHouOrder.contactPhone" ></el-input>
          </el-form-item>
-         <el-form-item label="前往日期：" prop="toTime">
+         <!-- <el-form-item label="前往日期：" prop="toTime">
            <el-date-picker v-model="shouHouOrder.toTime"  style="width:50%" format="yyyy 年 MM 月 dd 日 HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择日期时间">
            </el-date-picker>
-         </el-form-item>
+         </el-form-item> -->
        </div>
        </el-col>
         </el-row>
         <div style="width:100%;height:1px;border-top:1px solid;margin-bottom:15px;"></div>
+        <el-form-item label="质量总监：" prop="zl">
+           <el-input v-model="shouHouOrder.zl" ></el-input>
+        </el-form-item>
+        <el-form-item label="出厂光泽：" prop="zl">
+           <el-input v-model="shouHouOrder.gz" ></el-input>
+        </el-form-item>
         按贵司来函要求服务事项如下
         <el-row>
        <el-col>
-         <div class="grid-content bg-purple" style="margin-top:25px;">
+         <!-- <div class="grid-content bg-purple" style="margin-top:25px;">
              <el-form-item label="客户评价：" prop="customerAtti" >
                 <el-radio-group v-model="shouHouOrder.customerAtti">
                    <el-radio :label="0">满意</el-radio>
                    <el-radio :label="1">不满意</el-radio>
                  </el-radio-group>
                </el-form-item>
-           </div>
+           </div> -->
           <div class="grid-content bg-purple" style="margin-top:25px;">
-              <el-form-item label="处理详情：" prop="laoWuMingCheng" >
+              <el-form-item label="修复内容：" prop="laoWuMingCheng" >
                 <el-input type="textarea" autosize placeholder="请输入内容" v-model="shouHouOrder.fixContent" ></el-input >
                 </el-form-item>
             </div>
@@ -169,7 +177,7 @@
          <el-form-item label="单位地址：" prop="address">
            <el-input v-model="xzOrder.address" ></el-input>
          </el-form-item>
-         <el-form-item label="联系内容：" prop="contactContent">
+         <el-form-item label="备注：" prop="contactContent">
             <el-input v-model="xzOrder.contactContent" ></el-input>
          </el-form-item>
        </div></el-col>
@@ -184,9 +192,9 @@
            </el-date-picker>
            <!-- <el-input v-model="xzOrder.startDate" ></el-input> -->
          </el-form-item>
-         <el-form-item label="售后人员：" prop="shouHouMan">
+         <!-- <el-form-item label="售后人员：" prop="shouHouMan">
             <el-input v-model="xzOrder.shouHouMan" ></el-input>
-         </el-form-item>
+         </el-form-item> -->
        </div>
        </el-col>
         </el-row>
@@ -211,7 +219,7 @@
        </div>
        </el-col>
         </el-row>
-        <div style="width:100%;height:1px;border-top:1px solid;margin-bottom:15px;"></div>
+        <!-- <div style="width:100%;height:1px;border-top:1px solid;margin-bottom:15px;"></div>
         <el-row>
           <el-col>
             <el-form-item label="售后工具：" prop="fuKuanType">
@@ -269,7 +277,7 @@
                 <el-input v-model="xzOrder.remark" ></el-input>
             </el-form-item>
           </el-col>
-        </el-row>
+        </el-row> -->
       </el-form>
     </div>
     <div slot="footer" class="dialog-footer">
@@ -337,7 +345,8 @@ export default {
       totalnum: 0,
       pagesize: 10,
       select_word: '',
-      tableData: []
+      tableData: [],
+      itemXz:{},
     }
   },
   methods: {

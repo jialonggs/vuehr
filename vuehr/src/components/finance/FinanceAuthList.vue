@@ -148,7 +148,8 @@ export default {
     toBiLi(){
       let shiFu = this.form.financeJinE
       if(shiFu!== '' && shiFu !=='undefined'){
-        let biLi = shiFu / this.itemBus.total
+        let biLi = shiFu / this.itemBus.finalBaoJia
+        // alert(biLi);
         this.form.financeBiLi = Math.round(biLi*100);
       }
     },

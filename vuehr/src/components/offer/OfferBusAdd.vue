@@ -247,7 +247,7 @@ export default {
       noTaxPrice:"0",
       totalPrice:"0",
       fujianForm:{
-        tax: 16,
+        tax: 13,
         noTaxTotal:"0",
         total:"0"
       },
@@ -266,7 +266,7 @@ export default {
       table_loading: false,
       imageUrls: [],
       ruleForm: {
-        tax: '16',
+        tax: '13',
         addUserId: '',
         addUserName: ''
       },
@@ -596,6 +596,7 @@ export default {
       let total = self.elform.price * self.elform.productNum * gaiL;
       var te = this.$options.filters['toDecimal'];
       total = te(total);
+      var itempirce = self.elform.total/self.elform.productNum;
       let product = {
         yuBaoJiaId: '',
         productName: self.elform.productName,
@@ -603,12 +604,13 @@ export default {
         productNum: self.elform.productNum,
         area: self.elform.area,
         dongMo: self.elform.dongMo,
+        price:itempirce/self.elform.area,
         coefficient: self.elform.coefficient + '',
-        price: self.elform.price,
         picUrls: self.imageUrls,
         tax: self.ruleForm.tax,
-        noTaxPrice: self.elform.price * self.elform.productNum,
-        total: total,
+        //noTaxPrice: self.elform.price * self.elform.productNum,
+        noTaxPrice: self.elform.noTaxPrice,
+        total: self.elform.total,
         immutable: false,
         addUserId: this.uid,
         addUserName: this.name
@@ -650,7 +652,7 @@ export default {
         area: self.elform.area,
         dongMo: self.elform.dongMo,
         coefficient: self.elform.coefficient,
-        price: self.elform.noTaxPrice,
+        price: self.elform.total/(self.elform.productNum * self.elform.area),
         picUrls: self.imageUrls,
         tax: self.ruleForm.tax,
         noTaxPrice: self.elform.noTaxPrice,

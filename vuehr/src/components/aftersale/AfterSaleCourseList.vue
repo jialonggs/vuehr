@@ -3,8 +3,8 @@
   <div>
     <div class="crumbs" >
       <el-breadcrumb separator="/">
-        <el-breadcrumb-item><i class="el-icon-menu"></i>售后任务列表</el-breadcrumb-item>
-        <el-breadcrumb-item>订单记录</el-breadcrumb-item>
+        <el-breadcrumb-item><i class="el-icon-menu"></i>售后记录</el-breadcrumb-item>
+        <el-breadcrumb-item>售后过程记录</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <el-container>
@@ -26,28 +26,17 @@
                   <span>{{scope.row.order.addUserName}}</span>
                 </template>
                 </el-table-column>
-              <el-table-column label="下单日期">
+                <el-table-column prop="addUserName" label="确认情况">
                   <template slot-scope="scope">
-              <i class="el-icon-time"></i>
-              <span style="margin-left: 10px">{{ scope.row.order.createTime | formatDate }}</span>
-            </template>
-          </el-table-column>
-              <el-table-column prop="urgency" label="紧急程度">
-                <template slot-scope="scope">
-                  <el-tag v-if="scope.row.order.urgency+'' === '0'" type="primary">不急</el-tag>
-                  <el-tag v-if="scope.row.order.urgency+'' === '1'" type="danger">正常</el-tag>
-                  <el-tag v-if="scope.row.order.urgency+'' === '2'" type="primary">急C</el-tag>
-                  <el-tag v-if="scope.row.order.urgency+'' === '3'" type="danger">急B</el-tag>
-                  <el-tag v-if="scope.row.order.urgency+'' === '4'" type="primary">急A</el-tag>
-                  <el-tag v-if="scope.row.order.urgency+'' === '5'" type="danger">紧急C</el-tag>
-                  <el-tag v-if="scope.row.order.urgency+'' === '6'" type="primary">紧急B</el-tag>
-                  <el-tag v-if="scope.row.order.urgency+'' === '7'" type="danger">紧急A</el-tag>
-                  <el-tag v-if="scope.row.order.urgency+'' === '8'" type="danger">特急</el-tag>
-            </template>
-              </el-table-column>
+                    <span v-if="scope.row.cheJianId+'' === ''">车间未确认</span>
+                    <span v-if="scope.row.xingZhengId+'' === ''">行政未确认</span>
+                    <span v-if="scope.row.cheJianId+'' !== ''">车间已确认</span>
+                    <span v-if="scope.row.xingZhengId+'' !== ''">行政已确认</span>
+                  </template>
+                  </el-table-column>
               <el-table-column prop="userName" label="售后负责人">
               </el-table-column>
-              <el-table-column prop="status" label="售后报告状态">
+              <el-table-column prop="status" label="售后状态">
                 <template slot-scope="scope">
                   <el-tag v-if="scope.row.status+'' === '2'" type="primary">待补充行政单</el-tag>
                   <el-tag v-if="scope.row.status+'' === '3'" type="primary">待审核行政单</el-tag>
@@ -61,14 +50,26 @@
                   size="mini"
                   type="primary"
                   @click="toTiJiao(scope.row)">提交售后报告</el-button> -->
-                  <el-button v-if="scope.row.status + '' === '2'"
+                  <el-button v-if="scope.row.status"
                     size="mini"
                     type="primary"
-                    @click="toBuChong(scope.row)">补充行政单</el-button>
-                    <el-button v-if="scope.row.status > 2"
+                    @click="toXingZeng(scope.row)">查看行政单</el-button>
+                    <el-button v-if="scope.row.status"
                       size="mini"
                       type="primary"
-                      @click="toBuChong(scope.row)">查看行政单</el-button>
+                      @click="toShangWu(scope.row)">查看商务单</el-button>
+                      <el-button v-if="scope.row.status"
+                        size="mini"
+                        type="primary"
+                        @click="toQueRen(scope.row)">确认</el-button>
+                        <el-button v-if="scope.row.status == 4"
+                          size="mini"
+                          type="warning"
+                          @click="dayin(scope.row)">打印</el-button>
+                        <el-button v-if="scope.row.status == 4"
+                          size="mini"
+                          type="danger"
+                          @click="toWanJie(scope.row)">完结售后</el-button>
             </template>
               </el-table-column>
           </el-table>
@@ -151,7 +152,7 @@
          <el-form-item label="单位地址：" prop="address">
            <el-input v-model="xzOrder.address" :disabled="true" ></el-input>
          </el-form-item>
-         <el-form-item label="备注：" prop="contactContent">
+         <el-form-item label="备注" prop="contactContent">
             <el-input v-model="xzOrder.contactContent" :disabled="true"></el-input>
          </el-form-item>
        </div></el-col>
@@ -176,7 +177,7 @@
         中途转程
         <el-row :gutter="20">
        <el-col :span="12"><div class="grid-content bg-purple">
-         <el-form-item label="地 点：" prop="transferAddress" :disabled="true">
+         <el-form-item label="地 点：" prop="transferAddress" >
            <el-input v-model="xzOrder.transferAddress" :disabled="true"></el-input >
          </el-form-item>
          <el-form-item label="单 位：" prop="transferCompany">
@@ -197,7 +198,7 @@
         <el-row>
           <el-col>
             <el-form-item label="售后工具：" prop="fuKuanType">
-              <el-checkbox-group v-model="checkedGongJus">
+              <el-checkbox-group v-model="checkedGongJus" :disabled="true">
               <el-checkbox v-for="gj in gongjus" :label="gj" :key="gj">{{gj}}</el-checkbox>
             </el-checkbox-group>
             </el-form-item>
@@ -207,15 +208,15 @@
           <el-col>
             <el-form-item label="售后材料：" prop="fuKuanType">
                <span>砂：</span>
-               <el-checkbox-group v-model="checkedshas" >
+               <el-checkbox-group v-model="checkedshas" :disabled="true">
                <el-checkbox v-for="sha in shas" :label="sha" :key="sha">{{sha}}</el-checkbox>
                </el-checkbox-group>
               <span>洗模用品：</span>
-              <el-checkbox-group v-model="checkedyps">
+              <el-checkbox-group v-model="checkedyps" :disabled="true">
               <el-checkbox v-for="yp in yps" :label="yp" :key="yp">{{yp}}</el-checkbox>
               </el-checkbox-group>
               <span>其它材料：</span>
-              <el-checkbox-group v-model="checkedcls" >
+              <el-checkbox-group v-model="checkedcls" :disabled="true">
               <el-checkbox v-for="cl in cls" :label="cl" :key="cl">{{cl}}</el-checkbox>
               </el-checkbox-group>
             </el-form-item>
@@ -224,22 +225,22 @@
         <el-row>
           <el-col>
             <el-form-item label="后期补充：" prop="fuKuanType">
-              <el-checkbox-group v-model="checkedhqs" >
+              <el-checkbox-group v-model="checkedhqs" :disabled="true">
               <el-checkbox v-for="hq in hqs" :label="hq" :key="hq">{{hq}}</el-checkbox>
               </el-checkbox-group>
             </el-form-item>
             <el-form-item label="后期补充详情：" prop="houQiRemark">
-                <el-input v-model="xzOrder.houQiRemark" ></el-input>
+                <el-input v-model="xzOrder.houQiRemark" :disabled="true"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="外派人员：" prop="waiPaiRenYuan">
-                <el-input v-model="xzOrder.waiPaiRenYuan" ></el-input>
+                <el-input v-model="xzOrder.waiPaiRenYuan" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item label="交通方式：" prop="jiaoTong">
-                <el-input v-model="xzOrder.jiaoTong" ></el-input>
+                <el-input v-model="xzOrder.jiaoTong" :disabled="true"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -248,15 +249,131 @@
         <el-row>
           <el-col>
             <el-form-item label="备注：" prop="remark">
-                <el-input v-model="xzOrder.remark" ></el-input>
+                <el-input v-model="xzOrder.remark" :disabled="true"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
     </div>
+  </el-dialog>
+  <el-dialog title="售后服务回执单" :visible.sync="dialogFormVisible1" width='60%'>
+    <div class="form-box">
+      <el-form ref="form" :model="shouHouOrder" label-width="120px" >
+        <el-row :gutter="20">
+       <el-col :span="12"><div class="grid-content bg-purple">
+         <el-form-item label="客户单位：" prop="danwei">
+           <el-input v-model="shouHouOrder.danwei" :disabled="true"></el-input>
+         </el-form-item>
+         <el-form-item label="前往地址：" prop="address">
+           <el-input v-model="shouHouOrder.address" :disabled="true"></el-input>
+         </el-form-item>
+         <!-- <el-form-item label="售后人员：" prop="shouHouMan">
+            <el-input v-model="shouHouOrder.shouHouMan" :disabled="true"></el-input>
+         </el-form-item> -->
+       </div></el-col>
+       <el-col :span="12"><div class="grid-content bg-purple">
+         <el-form-item label="联系人：" prop="contactUser">
+            <el-input v-model="shouHouOrder.contactUser" :disabled="true"></el-input>
+         </el-form-item>
+         <el-form-item label="联系电话：" prop="contactPhone">
+           <el-input v-model="shouHouOrder.contactPhone" :disabled="true"></el-input>
+         </el-form-item>
+         <!-- <el-form-item label="前往日期：" prop="toTime">
+           <el-date-picker v-model="shouHouOrder.toTime" :disabled="true" style="width:50%" format="yyyy 年 MM 月 dd 日 HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择日期时间">
+           </el-date-picker>
+         </el-form-item> -->
+       </div>
+       </el-col>
+        </el-row>
+        <div style="width:100%;height:1px;border-top:1px solid;margin-bottom:15px;"></div>
+        <el-form-item label="质量总监：" prop="zl">
+           <el-input v-model="shouHouOrder.zl" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="出厂光泽：" prop="zl">
+           <el-input v-model="shouHouOrder.gz" :disabled="true"></el-input>
+        </el-form-item>
+        按贵司来函要求服务事项如下
+        <el-row>
+       <el-col>
+         <!-- <div class="grid-content bg-purple" style="margin-top:25px;">
+             <el-form-item label="客户评价：" prop="customerAtti" >
+                <el-radio-group v-model="shouHouOrder.customerAtti" :disabled="true">
+                   <el-radio :label="0">满意</el-radio>
+                   <el-radio :label="1">不满意</el-radio>
+                 </el-radio-group>
+               </el-form-item>
+           </div> -->
+          <div class="grid-content bg-purple" style="margin-top:25px;">
+              <el-form-item label="修复内容：" prop="laoWuMingCheng" >
+                <el-input type="textarea":disabled="true" autosize placeholder="请输入内容" v-model="shouHouOrder.fixContent" ></el-input >
+                </el-form-item>
+            </div>
+          </el-col>
+        </el-row>
+        <el-row>
+       <el-col>
+         <!-- <el-form-item label="上传图片：">
+           <div>
+             <vue-core-image-upload :crop="false" inputOfFile="imageFile" :url="upload" extensions="png,gif,jpeg,jpg" :class="['el-button', 'el-button--primary']" :max-file-size="5242880" :data="imageData" text="上传图片" :multiple="true" :multiple-size="30" credentials="true"
+               @imageuploaded="imageuploaded" @errorhandle="handleError">
+             </vue-core-image-upload>
+           </div>
+         </el-form-item> -->
+       </el-col>
+     </el-row>
+     <div style="border: 1px dashed #d9d9d9;width:100%;min-height:358px;">
+       <el-row :gutter="20" style="margin-top:10px;">
+         <el-col :span="6" v-for="imageUrl in imageUrls ">
+           <el-card :body-style="{ padding: '0px' }" class="mould-card">
+             <img class="image" v-bind:src="imageUrl" style="height:320px;">
+             <!-- <div style="text-align:center;">
+               <el-button type="text" @click="delMouldImage(imageUrl)"><i class="el-icon-error" style="color:red;"></i></el-button>
+             </div> -->
+           </el-card>
+         </el-col>
+       </el-row>
+     </div>
+      </el-form>
+    </div>
+    <!-- <div slot="footer" class="dialog-footer">
+      <el-button type="primary" @click="addShouHouOrder()">提 交</el-button>
+      <el-button  @click="dialogFormVisible = false">取 消</el-button>
+    </div> -->
+  </el-dialog>
+  <el-dialog title="售后完结单" :visible.sync="dialogFormVisible3" width='60%'>
+    <div class="form-box">
+      <el-form ref="form" :model="wanJieForm" label-width="120px" >
+        <el-form-item label="完结备注：" prop="zl">
+            <el-input type="textarea" autosize placeholder="请输入内容" v-model="wanJieForm.wanJieRemark" ></el-input >
+        </el-form-item>
+        <el-row>
+       <el-col>
+         <el-form-item label="上传图片：">
+           <div>
+             <vue-core-image-upload :crop="false" inputOfFile="imageFile" :url="upload" extensions="png,gif,jpeg,jpg" :class="['el-button', 'el-button--primary']" :max-file-size="5242880" :data="imageData" text="上传图片" :multiple="true" :multiple-size="30" credentials="true"
+               @imageuploaded="imageuploaded" @errorhandle="handleError">
+             </vue-core-image-upload>
+           </div>
+         </el-form-item>
+       </el-col>
+     </el-row>
+     <div style="border: 1px dashed #d9d9d9;width:100%;min-height:358px;">
+       <el-row :gutter="20" style="margin-top:10px;">
+         <el-col :span="6" v-for="wanJieImageUrl in wanJieImageUrls ">
+           <el-card :body-style="{ padding: '0px' }" class="mould-card">
+             <img class="image" v-bind:src="imageUrl" style="height:320px;">
+             <div style="text-align:center;">
+               <el-button type="text" @click="delMouldImage(wanJieImageUrl)"><i class="el-icon-error" style="color:red;"></i></el-button>
+             </div>
+           </el-card>
+         </el-col>
+       </el-row>
+     </div>
+      </el-form>
+    </div>
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" v-if="this.itemShouHou.status+'' == '2'"@click="updateXzOrder">提 交 </el-button>
-      <el-button  @click="dialogFormVisible2=false">取 消</el-button>
+      <el-button type="primary" @click="addWanJie()">提 交</el-button>
+      <el-button  @click="dialogFormVisible3 = false">取 消</el-button>
     </div>
   </el-dialog>
 </div>
@@ -275,6 +392,12 @@ export default {
   },
   data() {
     return {
+      wanJieForm:{
+        wanJieRemark:""
+      },
+      tableLoading2:false,
+      wanJieImageUrls:[],
+      dialogFormVisible1:false,
       checkedGongJus:[],
         checkedshas:[],
         checkedyps:[],
@@ -308,6 +431,7 @@ export default {
       uid: '',
       fenPei:'',
       dialogFormVisible: false,
+      dialogFormVisible3: false,
       select_word: '',
       form: {
           remark: '',
@@ -319,16 +443,101 @@ export default {
       tableData: [],
       itemData:'',
       itemShouHou:'',
+      shouHouOrder:{},
+      itemWanJie:{},
     }
   },
   methods: {
+    toWanJie(item){
+        this.imageUrl = [];
+        this.dialogFormVisible3 = true;
+        this.itemWanJie = item;
+    },
+    dayin(item) {
+      let id = item.id;
+      this.$router.push('/print/shouhou/' + id)
+    },
+    addWanJie(){
+      let url = "";
+      for (var i = 0; i < this.wanJieImageUrls.length; i++) {
+        if (i == this.wanJieImageUrls.length - 1) {
+          url = url + this.wanJieImageUrls[i]
+        } else {
+          url = this.wanJieImageUrls[i] + "|" + url
+        }
+      }
+      if(url.length <=0){
+        this.$message.error("请上传售后结果图片");
+        return;
+      }
+      let data = {
+        wanJieUrls:url,
+        wanJieRemark:this.wanJieForm.wanJieRemark,
+        id:this.itemWanJie.id
+      }
+      this.postRequest("/after/sale/job/wanjie", data).then(resp => {
+        if (resp && resp.status == 200 && resp.data.code == 0) {
+          this.$message.success("提交成功");
+          this.dialogFormVisible3 = false;
+          this.getCollectMouldList();
+        } else {
+          this.$message.error("提交失败");
+        }
+      })
+    },
+    toQueRen(item){
+      this.getRequest("/after/sale/course/checked?uid="+this.uid + "&orderId=" + item.orderId).then(resp => {
+        if (resp && resp.status == 200 && resp.data.code == 0) {
+          self.$message.success("确认成功");
+          this.getCollectMouldList();
+        } else {
+          self.$message.error("确认失败");
+        }
+      })
+    },
+    toShangWu(item){
+      this.imageUrls = [];
+      this.dialogFormVisible1 = true;
+      this.shouHouOrder = item.shBaoGao;
+      this.shouHouOrder = item.shBaoGao;
+      this.shouHouOrder.danwei = item.danwei;
+      this.shouHouOrder.address = item.address;
+      let picurl = item.shBaoGao.picUrls
+        if (picurl != "undefined" && picurl != "") {
+          let urlArray = picurl.split('|');
+          this.imageUrls = urlArray;
+        }
+    },
+    toXingZeng(data){
+      if(data.shXzOrder.gongJu.length > 0){
+        this.checkedGongJus = data.shXzOrder.gongJu.split(',');
+      }
+      if(data.shXzOrder.caiLiaoSha.length > 0){
+        this.checkedshas = data.shXzOrder.caiLiaoSha.split(',');
+      }
+      if(data.shXzOrder.caiLiaoYongPin.length > 0){
+        this.checkedyps = data.shXzOrder.caiLiaoYongPin.split(',');
+      }
+      if(data.shXzOrder.caiLiao.length > 0){
+        this.checkedcls = data.shXzOrder.caiLiao.split(',');
+      }
+      if(data.shXzOrder.houQi.length > 0){
+        this.checkedhqs = data.shXzOrder.houQi.split(',');
+      }
+      this.dialogFormVisible2 = true;
+      this.xzOrder = data.shXzOrder;
+      this.xzOrder.danWei = data.danwei;
+      this.xzOrder.address= data.address;
+      this.xzOrder.userName= data.userName;
+      this.itemShouHou = data;
+    },
     updateXzOrder(){
       this.xzOrder.gongJu = this.toJion(this.checkedGongJus);
       this.xzOrder.caiLiaoSha = this.toJion(this.checkedshas);
       this.xzOrder.caiLiaoYongPin = this.toJion(this.checkedyps);
       this.xzOrder.houQi = this.toJion(this.checkedhqs);
       this.xzOrder.caiLiao = this.toJion(this.checkedcls);
-      this.jsonPostRequest("/after/sale/wait/updateXZ", this.xzOrder).then(resp => {
+      this.jsonPostRequest("/after/sale/course/checked?uid="+this.uid).then(resp => {
         if (resp && resp.status == 200 && resp.data.code == 0) {
            this.dialogFormVisible2 = false;
            this.$message.success("提交成功");
@@ -377,11 +586,11 @@ export default {
       let self = this;
       if (data.url.length !== 'undefined' && data.url.length > 0) {
         let url = data.url
-        let urls = self.imageUrls;
+        let urls = self.wanJieImageUrls;
         for (var i = 0; i < url.length; i++) {
           urls.push(url[i]);
         }
-        self.imageUrls = urls;
+        self.wanJieImageUrls = urls;
       }
     },
     delMouldImage(url) {
@@ -407,19 +616,18 @@ export default {
       this.getRequest("/config/delfile/delImage?url=" + url).then(resp => {
         if (resp && resp.status == 200 && resp.data.code == 0) {
           self.$message.success("删除成功");
-          let urls = self.imageUrls;
+          let urls = self.wanJieImageUrls;
           let newUrls = [];
           for (var i = 0; i < urls.length; i++) {
             if (url != urls[i]) {
               newUrls.push(urls[i])
             }
           }
-          self.imageUrls = newUrls;
+          self.wanJieImageUrls = newUrls;
         } else {
           self.$message.error("删除照片失败");
         }
       })
-
     },
     // 上传图片失败
     handleError() {

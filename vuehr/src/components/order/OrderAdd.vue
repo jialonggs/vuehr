@@ -142,7 +142,7 @@
                   <el-input v-model="elform1.wenliName" style="width:30%;" placeholder="请输入纹理代码"></el-input>
                 </el-form-item>
                 <el-form-item label="倍数：" prop="times">
-                  <el-input-number v-model="elform1.times" controls-position="right" :min="1"></el-input-number>
+                  <el-input v-model="elform1.times"  style="width:30%;" controls-position="right" ></el-input>
                 </el-form-item>
                 <el-form-item label="加工面积：" prop="area">
                   <el-input-number v-model="elform1.area" controls-position="right" :min="0"></el-input-number>
@@ -536,6 +536,10 @@ export default {
     },
     addWenLi() {
       let self = this;
+      if(this.elform1.times =='undefined' || this.elform1.times <=0){
+        this.$message.error("请正确填写面积倍数");
+        return;
+      }
       let wenli = {
         wenliName: this.elform1.wenliName,
         times: this.elform1.times,

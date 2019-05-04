@@ -59,7 +59,7 @@
         </el-form-item>
         <el-form-item label="选择主机厂:" prop="name">
           <template>
-<el-select v-model="enginefrom.mainEngineId" clearable placeholder="请选择">
+<el-select v-model="enginefrom.mainEngineId" filterable placeholder="请选择">
   <el-option
     v-for="item in options"
     :key="item.value"
@@ -148,6 +148,7 @@ export default {
       this.dialogFormVisible = true;
       this.enginefrom = item;
       this.updateflag = true;
+      this.addloading = false;
     },
     toadd() {
       this.dialogFormVisible = true;

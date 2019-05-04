@@ -23,6 +23,8 @@
               </el-table-column>
               <el-table-column prop="wuLiaoName" label="纹理编号">
               </el-table-column>
+              <el-table-column prop="wenliChengCi" label="花纹层次">
+              </el-table-column>
               <el-table-column prop="wuLiaoNum" label="数量(张)">
               </el-table-column>
               <el-table-column prop="liaoJiang" label="料浆">

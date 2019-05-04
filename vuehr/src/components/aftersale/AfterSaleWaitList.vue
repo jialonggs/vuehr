@@ -54,7 +54,7 @@
                   <el-button
                     size="mini"
                     type="primary"
-                    @click="">售后回执单</el-button>
+                    @click="toHuZ(scope.row)">查看商务单</el-button>
             </template>
               </el-table-column>
           </el-table>
@@ -75,8 +75,18 @@
                     <el-option v-for="item1 in restaurants4" :key="item1.value" :label="item1.label" :value="item1"></el-option>
                   </el-select>
                 </el-form-item>
+                <el-form-item label="前往时间:">
+                  <el-date-picker style="width:40%" format="yyyy 年 MM 月 dd 日 HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" v-model="form.toTime" type="datetime" placeholder="选择日期时间">
+                  </el-date-picker>
+                </el-form-item>
+                <el-form-item label="预计时间:">
+                  <el-input  v-model="form.days"></el-input>
+                </el-form-item>
+                <el-form-item label="始派地点:">
+                  <el-input  v-model="form.diDian"></el-input>
+                </el-form-item>
               <el-form-item label="备注：">
-                  <el-input type="textarea" v-model="form.remark"></el-input>
+                  <el-input type="textarea" v-model="form.ZJremark"></el-input>
               </el-form-item>
               <!-- <el-form-item label="上传照片：">
                   <el-upload class="upload-demo" drag action="/api/posts/" multiple>
@@ -93,63 +103,69 @@
       </div>
   </el-dialog>
   <!-- 审核步骤 -->
-  <el-dialog title="售后服务回执单" :visible.sync="dialogFormVisible1" width='60%' v-loading="tableLoading1">
+  <el-dialog title="售后服务回执单" :visible.sync="dialogFormVisible1" width='60%'>
     <div class="form-box">
       <el-form ref="form" :model="shouHouOrder" label-width="120px" >
         <el-row :gutter="20">
        <el-col :span="12"><div class="grid-content bg-purple">
          <el-form-item label="客户单位：" prop="danwei">
-           <el-input v-model="shouHouOrder.danwei" ></el-input>
+           <el-input v-model="shouHouOrder.danwei" :disabled="true"></el-input>
          </el-form-item>
          <el-form-item label="前往地址：" prop="address">
-           <el-input v-model="shouHouOrder.address" ></el-input>
+           <el-input v-model="shouHouOrder.address" :disabled="true"></el-input>
          </el-form-item>
-         <el-form-item label="售后人员：" prop="shouHouMan">
+         <!-- <el-form-item label="售后人员：" prop="shouHouMan">
             <el-input v-model="shouHouOrder.shouHouMan" ></el-input>
-         </el-form-item>
+         </el-form-item> -->
        </div></el-col>
        <el-col :span="12"><div class="grid-content bg-purple">
          <el-form-item label="联系人：" prop="contactUser">
-            <el-input v-model="shouHouOrder.contactUser" ></el-input>
+            <el-input v-model="shouHouOrder.contactUser" :disabled="true"></el-input>
          </el-form-item>
          <el-form-item label="联系电话：" prop="contactPhone">
-           <el-input v-model="shouHouOrder.contactPhone" ></el-input>
+           <el-input v-model="shouHouOrder.contactPhone" :disabled="true"></el-input>
          </el-form-item>
-         <el-form-item label="前往日期：" prop="toTime">
+         <!-- <el-form-item label="前往日期：" prop="toTime">
            <el-date-picker v-model="shouHouOrder.toTime"  style="width:50%" format="yyyy 年 MM 月 dd 日 HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择日期时间">
            </el-date-picker>
-         </el-form-item>
+         </el-form-item> -->
        </div>
        </el-col>
         </el-row>
         <div style="width:100%;height:1px;border-top:1px solid;margin-bottom:15px;"></div>
+        <el-form-item label="质量总监：" prop="zl">
+           <el-input v-model="shouHouOrder.zl" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="出厂光泽：" prop="zl">
+           <el-input v-model="shouHouOrder.gz" :disabled="true"></el-input>
+        </el-form-item>
         按贵司来函要求服务事项如下
         <el-row>
        <el-col>
-         <div class="grid-content bg-purple" style="margin-top:25px;">
+         <!-- <div class="grid-content bg-purple" style="margin-top:25px;">
              <el-form-item label="客户评价：" prop="customerAtti" >
                 <el-radio-group v-model="shouHouOrder.customerAtti">
                    <el-radio :label="0">满意</el-radio>
                    <el-radio :label="1">不满意</el-radio>
                  </el-radio-group>
                </el-form-item>
-           </div>
+           </div> -->
           <div class="grid-content bg-purple" style="margin-top:25px;">
-              <el-form-item label="处理详情：" prop="laoWuMingCheng" >
-                <el-input type="textarea" autosize placeholder="请输入内容" v-model="shouHouOrder.fixContent" ></el-input >
+              <el-form-item label="修复内容：" prop="laoWuMingCheng" >
+                <el-input type="textarea" :disabled="true" autosize placeholder="请输入内容" v-model="shouHouOrder.fixContent" ></el-input >
                 </el-form-item>
             </div>
           </el-col>
         </el-row>
         <el-row>
        <el-col>
-         <el-form-item label="上传图片：">
+         <!-- <el-form-item label="上传图片：">
            <div>
              <vue-core-image-upload :crop="false" inputOfFile="imageFile" :url="upload" extensions="png,gif,jpeg,jpg" :class="['el-button', 'el-button--primary']" :max-file-size="5242880" :data="imageData" text="上传图片" :multiple="true" :multiple-size="30" credentials="true"
                @imageuploaded="imageuploaded" @errorhandle="handleError">
              </vue-core-image-upload>
            </div>
-         </el-form-item>
+         </el-form-item> -->
        </el-col>
      </el-row>
      <div style="border: 1px dashed #d9d9d9;width:100%;min-height:358px;">
@@ -157,19 +173,19 @@
          <el-col :span="6" v-for="imageUrl in imageUrls ">
            <el-card :body-style="{ padding: '0px' }" class="mould-card">
              <img class="image" v-bind:src="imageUrl" style="height:320px;">
-             <div style="text-align:center;">
+             <!-- <div style="text-align:center;">
                <el-button type="text" @click="delMouldImage(imageUrl)"><i class="el-icon-error" style="color:red;"></i></el-button>
-             </div>
+             </div> -->
            </el-card>
          </el-col>
        </el-row>
      </div>
       </el-form>
     </div>
-    <div slot="footer" class="dialog-footer">
+    <!-- <div slot="footer" class="dialog-footer">
       <el-button type="primary" @click="addShouHouOrder()">提 交</el-button>
       <el-button  @click="dialogFormVisible = false">取 消</el-button>
-    </div>
+    </div> -->
   </el-dialog>
 </div>
 </template>
@@ -178,6 +194,8 @@ export default {
   data() {
     return {
       item:{},
+      imageUrls:[],
+      shouHouOrder:{},
       restaurants4:[],
       username: '',
       itemYga:'',
@@ -185,27 +203,47 @@ export default {
       uid: '',
       fenPei:'',
       dialogFormVisible: false,
+      dialogFormVisible1:false,
       select_word: '',
       form: {
-          remark: '',
+          ZJremark: '',
+          diDian:'',
+          days:'',
+          toTime:'',
       },
       currentPage: 1,
       totalnum: 0,
       pagesize: 10,
       select_word: '',
-      tableData: []
+      tableData: [],
+
     }
   },
   methods: {
-    shouHouOrder:{
-
+    toHuZ(item){
+      this.imageUrls = [];
+      this.dialogFormVisible1 = true;
+      this.shouHouOrder = item.shBaoGao;
+      this.shouHouOrder.danwei = item.danwei;
+      this.shouHouOrder.address = item.address;
+      let picurl = item.shBaoGao.picUrls
+        if (picurl != "undefined" && picurl != "") {
+          let urlArray = picurl.split('|');
+          this.imageUrls = urlArray;
+        }
     },
     toFenPei(item){
       this.dialogFormVisible = true;
       this.fenPei = item;
+      this.form = {
+          ZJremark: '',
+          diDian:'',
+          days:'',
+          toTime:'',
+      }
       this.loadAllYuanGongA();
       this.itemYag = [];
-      this.form.remark ='';
+
     },
     toChaKan(data){
 
@@ -217,12 +255,15 @@ export default {
     },
     toAdd(){
      let shouhou = {
-          remark: this.form.remark,
+          ZJremark: this.form.ZJremark,
+          days:this.form.days,
+          toTime:this.form.toTime,
+          diDian:this.form.diDian,
           orderId: this.fenPei.order.id,
           userId: this.itemYga.value,
           userName: this.itemYga.label,
           addUserId:this.uid,
-          addUserName:this.name
+          addUserName:this.name,
       }
       this.jsonPostRequest("/after/sale/wait/add", shouhou).then(resp => {
         if (resp && resp.status == 200 && resp.data.code == 0) {
@@ -236,7 +277,7 @@ export default {
     },
     loadAllYuanGongA() {
       let self = this
-      this.getRequest("/config/mangers?role=ROLE_shouhou").then(resp => {
+      this.getRequest("/config/mangers?role=ROLE_shou_hou").then(resp => {
         if (resp && resp.status == 200 && resp.data.code == 0) {
           let item = []
           let re = resp.data.data;

@@ -82,7 +82,7 @@
            <el-form-item label="税率：" prop="tax">
              <el-input-number v-model="fujianForm.tax" controls-position="right" :min="0"></el-input-number>
            </el-form-item>
-           <el-form-item label="不含税总价：" prop="total"  required>
+           <el-form-item label="含税总价：" prop="total"  required>
              <el-input-number v-model="fujianForm.total" @blur="toChange1" controls-position="right" :min="0"></el-input-number>
            </el-form-item>
            <!-- <el-form-item label="含税总价：" prop="tax" required>
@@ -101,7 +101,7 @@
                   inputOfFile="imageFile"
                   :url="upload"
                  extensions="png,ppt,docx,txt,jpg,xlsx,pdf"
-                 :max-file-size="5242880"
+                 :max-file-size="524288000"
                  :data="wenjianData" text="上传文件"
                  :multiple="true"
                  :multiple-size="30"
@@ -248,7 +248,7 @@ export default {
       wen_jian_url:'',
       upload:'',
       fujianForm:{
-        tax: 16,
+        tax: 13,
         noTaxTotal:"0",
         total:"0"
       },
@@ -267,7 +267,7 @@ export default {
       table_loading: false,
       imageUrls: [],
       ruleForm: {
-        tax: '16',
+        tax: '13',
         addUserId: '',
         addUserName: ''
       },
@@ -606,11 +606,11 @@ export default {
         area: self.elform.area,
         dongMo: self.elform.dongMo,
         coefficient: self.elform.coefficient + '',
-        price: self.elform.price,
+        price: self.elform.total/(self.elform.productNum * self.elform.area),
         picUrls: self.imageUrls,
         tax: self.ruleForm.tax,
-      //  noTaxPrice: self.elform.price * self.elform.productNum,
-      //  total: total,
+        noTaxPrice: self.elform.noTaxPrice,
+        total: self.elform.total,
         immutable: false,
         addUserId: this.uid,
         addUserName: this.name
@@ -652,11 +652,13 @@ export default {
         area: self.elform.area,
         dongMo: self.elform.dongMo,
         coefficient: self.elform.coefficient,
-        price: self.elform.noTaxPrice,
+        price: self.elform.total/(self.elform.productNum * self.elform.area),
         picUrls: self.imageUrls,
         tax: self.ruleForm.tax,
-        noTaxPrice: self.elform.noTaxPrice * self.elform.productNum,
-        total: self.elform.total* self.elform.productNum,
+        //noTaxPrice: self.elform.noTaxPrice * self.elform.productNum,
+        noTaxPrice: self.elform.noTaxPrice,
+        //total: self.elform.total* self.elform.productNum,
+        total: self.elform.total,
         immutable: false,
         addUserId: this.uid,
         addUserName: this.name

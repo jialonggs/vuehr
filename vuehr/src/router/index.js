@@ -10,6 +10,7 @@ import PlantOrderInfo from '@/components/plant/PlantOrderInfo'
 import OfferBusInfo from '@/components/offer/OfferBusInfo'
 import OfferPerInfo from '@/components/offer/OfferPerInfo'
 import BusPrint from '@/components/print/Busprint'
+import ShouHouPrint from '@/components/print/ShouHouPrint'
 import UserInfo from '@/components/user/userInfo'
 // import EmpAdv from '@/components/emp/EmpAdv'
 // import EmpBasic from '@/components/emp/EmpBasic'
@@ -49,6 +50,12 @@ export default new Router({
       path: '/print/bus/:id',
       name: 'print',
       component: BusPrint,
+      hidden: true
+    },
+    {
+      path: '/print/shouhou/:id',
+      name: 'print',
+      component: ShouHouPrint,
       hidden: true
     },
      {

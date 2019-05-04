@@ -463,9 +463,9 @@ export default {
     },
     toLieBiao() {
       this.nowTab = 1;
+      this.partsInfos = [];
     },
     mojuInfo(item) {
-      this.nowTab = 3;
       this.pkGuid = item.id;
       let parts = []
       parts = item.mouldInfos;
@@ -474,14 +474,20 @@ export default {
         parts.forEach(function(part, index, array) {
           let picurl = part.picUrls;
           let urlArray = [];
-          if (picurl != "undefined" && picurl != "") {
-            urlArray = picurl.split('|');
-            part.picUrls = urlArray;
+          if (picurl instanceof Array){
+              part.picUrls = picurl;
+          } else {
+            if (picurl != "undefined" && picurl != "") {
+              urlArray = picurl.split('|');
+              part.picUrls = urlArray;
+            }
           }
           newPartInfo.push(part);
+          console.log(newPartInfo);
         })
         this.partsInfos = newPartInfo;
       }
+        this.nowTab = 3;
     },
     // 添加模具信息
     addMouldInfos(formName) {

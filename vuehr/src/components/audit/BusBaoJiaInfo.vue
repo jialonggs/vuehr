@@ -86,13 +86,13 @@
                 </el-table-column>
                 <el-table-column prop="productNum" label="数量">
                 </el-table-column>
-                <el-table-column prop="price" label="含税">
+                <el-table-column prop="total" label="含税">
                 </el-table-column>
                 <el-table-column prop="price" label="单价">
                 </el-table-column>
                 <el-table-column prop="area" label="面积">
                 </el-table-column>
-                <el-table-column prop="price" label="不含税价格">
+                <el-table-column prop="noTaxPrice" label="不含税价格">
                 </el-table-column>
                 <el-table-column fixed="right" label="操作" width="300">
                   <template slot-scope="scope">
@@ -149,7 +149,7 @@ export default {
       table_loading: false,
       imageUrls: [],
       ruleForm: {
-        tax: '17',
+        tax: '13',
         addUserId: '',
         addUserName: ''
       },
@@ -185,6 +185,11 @@ export default {
         auditId: this.uid,
         auditName: this.name,
         rejectRemark: this.form.rejectRemark
+      }
+
+      if(params.rejectRemark =='' || params.rejectRemark+'' =='undefined'){
+        this.$message.error("请填写驳回原因");
+        return
       }
       this.postRequest("/audit/bus/check", params).then(resp => {
         if (resp && resp.status == 200 && resp.data.code == 0) {

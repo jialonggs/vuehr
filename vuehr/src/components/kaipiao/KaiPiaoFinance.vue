@@ -283,6 +283,9 @@
               <el-form-item label="单 位：" prop="danWei">
                 <el-input v-model="kaiPiao.danWei"  :disabled="true"></el-input>
               </el-form-item>
+              <el-form-item label="欠款开票原因：" prop="shangWuRemark">
+                <el-input v-model="kaiPiao.shangWuRemark" :disabled="true"></el-input>
+              </el-form-item>
             </div>
           </el-col>
           <el-col :span="12">
@@ -345,7 +348,7 @@
       </el-form>
     </div>
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="tongGuo(1)">通 过</el-button>
+      <el-button type="primary" @click="tongGuo(3)">通 过</el-button>
       <el-button type="danger" @click="innerVisible = true">驳 回</el-button>
     </div>
     <el-dialog width="30%" title="驳回原因" :visible.sync="innerVisible" append-to-body>
@@ -356,7 +359,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="tijiao(-1)">提 交</el-button>
+        <el-button type="danger" @click="tijiao(-3)">提 交</el-button>
       </div>
     </el-dialog>
   </el-dialog>
@@ -547,10 +550,12 @@ export default {
       //   addUserId: this.auditItem.addUserId,
       //   auditRemark: this.form.remark
       // }
+
       this.kaiPiao.auditFinanceName = this.name;
       this.kaiPiao.auditFinanceId = this.uid;
       this.kaiPiao.caiWuRemark = this.form.remark;
       this.kaiPiao.status = status;
+
       this.postRequest("/kai/piao/check", this.kaiPiao).then(resp => {
         if (resp && resp.status == 200 && resp.data.code == 0) {
           this.$message.success("审核成功");

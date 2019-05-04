@@ -271,6 +271,14 @@ export default {
     },
     toAddMouldRecord() {
       this.nowTab = 2;
+      this.exfrom = {
+        addUserId: '',
+        mouldId:'',
+        addUserName: '0',
+        youSiWenNum: '0',
+        wuSiWenNum: '0',
+        remark: ''
+      },
       this.loadAllProject();
     },
     delMouldRecord(pkGuid) {

@@ -3,8 +3,8 @@
   <div>
     <div class="crumbs">
       <el-breadcrumb separator="/">
-        <el-breadcrumb-item><i class="el-icon-menu"></i>开票记录</el-breadcrumb-item>
-        <el-breadcrumb-item>文员审核记录</el-breadcrumb-item>
+        <el-breadcrumb-item><i class="el-icon-menu"></i>开票审核</el-breadcrumb-item>
+        <el-breadcrumb-item>开票列表</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <el-container>
@@ -61,14 +61,14 @@
                 <span>{{scope.row.createTime | formatDateTime}}</span>
               </template>
                 </el-table-column>
-                <el-table-column align="center" label="操作">
+                <!-- <el-table-column align="center" label="操作">
                   <template slot-scope="scope">
               <el-button
                 size="mini"
                 type="primary"
                 @click="toShenHe(scope.row)">审核</el-button>
             </template>
-                </el-table-column>
+                </el-table-column> -->
               </el-table>
               <div class="block" style="float:right;margin-top:15px;">
                 <el-pagination @size-change="handleSizeChange0" @current-change="handleCurrentChange0" :current-page="currentPage0" :page-sizes="[10, 30, 80, 100]" :page-size="pagesize0" layout="total,sizes, prev, pager, next, jumper" :total="totalnum0">
@@ -125,14 +125,14 @@
                 <span>{{scope.row.createTime | formatDateTime}}</span>
               </template>
                 </el-table-column>
-                <el-table-column align="center" label="操作">
+                <!-- <el-table-column align="center" label="操作">
                   <template slot-scope="scope">
-              <!-- <el-button
+              <el-button
                 size="mini"
                 type="primary"
-                @click="toShenHe(scope.row)">审核</el-button> -->
+                @click="toShenHe(scope.row)">审核</el-button>
             </template>
-                </el-table-column>
+                </el-table-column> -->
               </el-table>
               <div class="block" style="float:right;margin-top:15px;">
                 <el-pagination @size-change="handleSizeChange1" @current-change="handleCurrentChange1" :current-page="currentPage1" :page-sizes="[10, 30, 80, 100]" :page-size="pagesize1" layout="total,sizes, prev, pager, next, jumper" :total="totalnum1">
@@ -188,14 +188,14 @@
                 <span>{{scope.row.createTime | formatDateTime}}</span>
               </template>
                 </el-table-column>
-                <el-table-column align="center" label="操作">
+                <!-- <el-table-column align="center" label="操作">
                   <template slot-scope="scope">
-              <!-- <el-button
+              <el-button
                 size="mini"
                 type="primary"
-                @click="toShenHe(scope.row)">审核</el-button> -->
+                @click="toShenHe(scope.row)">审核</el-button>
             </template>
-                </el-table-column>
+                </el-table-column> -->
               </el-table>
               <div class="block" style="float:right;margin-top:15px;">
                 <el-pagination @size-change="handleSizeChange2" @current-change="handleCurrentChange2" :current-page="currentPage2" :page-sizes="[10, 30, 80, 100]" :page-size="pagesize2" layout="total,sizes, prev, pager, next, jumper" :total="totalnum2">
@@ -365,117 +365,6 @@
       </div>
     </el-dialog>
   </el-dialog>
-  <!-- <el-dialog title="审核开票申请" :visible.sync="dialogFormVisible2" width='80%' v-loading="tableLoading2">
-    <div class="form-box">
-      <el-form ref="form" :model="kaiPiao" label-width="120px">
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <div class="grid-content bg-purple">
-              <el-form-item label="合同页：" prop="heTongYe">
-                <el-input v-model="kaiPiao.heTongYe" ></el-input>
-              </el-form-item>
-              <el-form-item label="名 称：" prop="unitName">
-                <el-input v-model="kaiPiao.unitName" ></el-input>
-              </el-form-item>
-              <el-form-item label="地 址：" prop="unitDiZhi">
-                <el-input v-model="kaiPiao.unitDiZhi" ></el-input>
-              </el-form-item>
-              <el-form-item label="开户银行：" prop="unitYinHang">
-                <el-input v-model="kaiPiao.unitYinHang" ></el-input>
-              </el-form-item>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div class="grid-content bg-purple">
-              <el-form-item label="税 号：" prop="unitShuiHao">
-                <el-input v-model="kaiPiao.unitShuiHao" ></el-input>
-              </el-form-item>
-              <el-form-item label="电 话：" prop="unitTel">
-                <el-input v-model="kaiPiao.unitTel" ></el-input>
-              </el-form-item>
-              <el-form-item label="账 号：" prop="unitZhangHao">
-                <el-input v-model="kaiPiao.unitZhangHao"></el-input>
-              </el-form-item>
-            </div>
-          </el-col>
-        </el-row>
-        <div style="width:100%;height:1px;border-top:1px solid;margin-bottom:15px;"></div>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <div class="grid-content bg-purple">
-              <el-form-item label="货物或应税劳务名称：" prop="laoWuMingCheng" label-width="160px">
-                <el-input v-model="kaiPiao.laoWuMingCheng" ></el-input>
-              </el-form-item>
-              <el-form-item label="规格型号：" prop="guiGeXingHao">
-                <el-input v-model="kaiPiao.guiGeXingHao" ></el-input>
-              </el-form-item>
-              <el-form-item label="单 位：" prop="danWei">
-                <el-input v-model="kaiPiao.danWei" ></el-input>
-              </el-form-item>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div class="grid-content bg-purple">
-              <el-form-item label="数 量：" prop="shuLiang">
-                <el-input v-model="kaiPiao.shuLiang" ></el-input>
-              </el-form-item>
-              <el-form-item label="含税金额：" prop="jinE">
-                <el-input v-model="kaiPiao.jinE" ></el-input>
-              </el-form-item>
-              <el-form-item label="下载文件：" prop="danWei">
-                <template >
-                  <a :href="kaiPiao.wenJianUrl" download="w3logo" style="color:blue;">下载原文件</a>
-            </template>
-              </el-form-item>
-            </div>
-          </el-col>
-        </el-row>
-        <div style="width:100%;height:1px;border-top:1px solid;margin-bottom:15px;"></div>
-        <el-row :gutter="20">
-          <el-col :span="12">
-            <div class="grid-content bg-purple">
-              <el-form-item label="发票号码：" prop="faPiaoNum" label-width="160px">
-                <el-input v-model="kaiPiao.faPiaoNum" ></el-input>
-              </el-form-item>
-              <el-form-item label="备 注：" prop="remark">
-                <el-input v-model="kaiPiao.remark" ></el-input>
-              </el-form-item>
-            </div>
-          </el-col>
-          <el-col :span="12">
-            <div class="grid-content bg-purple">
-              <el-form-item label="是否付清：" prop="fuQing">
-                <el-switch v-model="kaiPiao.fuQing" ></el-switch>
-              </el-form-item>
-              <el-form-item label="付款方式：" prop="fuKuanType">
-                <el-radio-group v-model="kaiPiao.fuKuanType" >
-                  <el-radio label="现金" value="0"></el-radio>
-                  <el-radio label="汇票" value="1"></el-radio>
-                  <el-radio label="汇款" value="2"></el-radio>
-                  <el-radio label="支票" value="3"></el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </div>
-          </el-col>
-        </el-row>
-      </el-form>
-    </div>
-    <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="tongGuo(1)">通 过</el-button>
-      <el-button type="danger" @click="innerVisible = true">驳 回</el-button>
-    </div>
-    <el-dialog width="30%" title="驳回原因" :visible.sync="innerVisible" append-to-body>
-      <el-form :model="form">
-        <el-form-item label="原因">
-          <el-input type="textarea"  placeholder="请输入内容" v-model="form.remark">
-          </el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="danger" @click="tijiao(-1)">提 交</el-button>
-      </div>
-    </el-dialog>
-  </el-dialog> -->
 </div>
 </template>
 <style>
@@ -636,9 +525,8 @@ export default {
     // 获取待审核的列表
     getCollectMouldList(audit, currentPage, pagesize) {
       let _this = this
-      this.getRequest("/kai/piao/listbypage?page=" + currentPage + "&size=" + pagesize + "&status=" + audit + "&type=2").then(resp => {
+      this.getRequest("/kai/piao/order/listbypage?page=" + currentPage + "&size=" + pagesize + "&status=" + audit + "&userId=" + this.uid).then(resp => {
         if (resp && resp.status == 200 && resp.data.code == 0) {
-          console.log(resp);
           if (audit == 0) {
             _this.tableData0 = resp.data.data.famolist
             _this.totalnum0 = resp.data.data.count

@@ -66,7 +66,7 @@
     <div class="form-box">
       <el-form ref="enginefrom" :model="enginefrom" :rules="rules" label-width="120px">
         <el-form-item label="选择车型:" >
-          <el-select v-model="cars" multiple placeholder="请选择车型">
+          <el-select v-model="cars" filterable  placeholder="请选择车型">
             <el-option
               v-for="ar in allCars"
               :key="ar.value"
@@ -196,7 +196,6 @@ export default {
           this.cars.push(item.cars[i].id);
         }
       }
-      this.updateEngine('enginefrom');
     },
     toadd() {
       this.dialogFormVisible = true;
@@ -212,6 +211,7 @@ export default {
         addUserName: '',
         carIds: []
       },
+      this.cars = [];
       this.updateflag = false;
       this.dialogFormVisible = false;
     },
@@ -256,6 +256,8 @@ export default {
           }
           this.postRequest("/unit/update", data).then(resp => {
             this.dialogFormVisible = false;
+            this.updateflag = false;
+            this.cars = [];
             if (resp && resp.status == 200 && resp.data.code == 0) {
               this.$message.success("修改成功")
               this.getCollectMouldList();

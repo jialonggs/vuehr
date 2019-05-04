@@ -273,6 +273,9 @@
               <el-form-item label="单 位：" prop="danWei">
                 <el-input v-model="kaiPiao.danWei"  :disabled="true"></el-input>
               </el-form-item>
+              <el-form-item label="欠款开票原因：" prop="shangWuRemark">
+                <el-input v-model="kaiPiao.shangWuRemark" :disabled="true"></el-input>
+              </el-form-item>
             </div>
           </el-col>
           <el-col :span="12">
@@ -415,14 +418,12 @@ export default {
       this.kaiPiao.auditShangName = this.name;
       this.kaiPiao.auditShangId = this.uid;
       this.kaiPiao.status = status;
-      this.kaiPiao.shangWuRemark=this.form.remark
       this.postRequest("/kai/piao/check", this.kaiPiao).then(resp => {
         if (resp && resp.status == 200 && resp.data.code == 0) {
           this.$message.success("审核成功");
           this.dialogFormVisible2 = false;
           this.innerVisible=false;
-          this.getCollectMouldList(0, this.currentPage0, this.pagesize0)
-          //this.tongGuoShenHe(0);
+          this.getCollectMouldList(0, this.currentPage0, this.pagesize0);
         } else {
           this.$message.error("审核失败");
         }

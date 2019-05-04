@@ -239,6 +239,7 @@ export default {
       });
     },
     selectYga() {
+
       let item = this.itemYga;
       let itemYags = this.Ygas;
       let tieHuaBuShu = this.form.syTHBS

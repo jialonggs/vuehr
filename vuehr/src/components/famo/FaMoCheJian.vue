@@ -5,7 +5,7 @@
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item><i class="el-icon-menu"></i>发模管理</el-breadcrumb-item>
-        <el-breadcrumb-item>已提交列表</el-breadcrumb-item>
+        <el-breadcrumb-item>车间确认列表</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <el-container>
@@ -15,24 +15,16 @@
         </div>
       </el-header>
       <el-main style="padding-left: 0px;padding-top: 0px">
-        <el-table :data="tableData" stripe style="width: 100%" v-loading="tableLoading">
+        <el-table :data="tableData" border stripe @selection-change="handleSelectionChange" stripe style="width: 100%" v-loading="tableLoading">
+          <el-table-column type="selection" align="left" width="30">
+          </el-table-column>
           <el-table-column label="产品名称" prop="orderName">
           </el-table-column>
           <el-table-column label="发模类型">
             <template slot-scope="scope">
             <el-tag type="info" v-if="scope.row.faMoType+'' === '0'" >欠款发模</el-tag>
-            <!-- <el-tag type="success" v-if="scope.row.faMoType+'' === '1'" >部分付款发模</el-tag> -->
+            <el-tag type="success" v-if="scope.row.faMoType+'' === '1'" >部分付款发模</el-tag>
             <el-tag type="warning" v-if="scope.row.faMoType+'' === '2'" >全款发模</el-tag>
-        </template>
-          </el-table-column>
-          <el-table-column label="审核状态">
-            <template slot-scope="scope">
-              <el-tag type="info" v-if="scope.row.status+'' === '0'" >待审核</el-tag>
-              <el-tag type="success" v-if="scope.row.status+'' === '1'" >商务审核通过</el-tag>
-              <el-tag type="warning" v-if="scope.row.status+'' === '-1'" >商务审核未通过</el-tag>
-              <el-tag type="success" v-if="scope.row.status+'' === '2'" >经理审核通过</el-tag>
-              <el-tag type="danger" v-if="scope.row.status+'' === '-2'" >经理审核未通过</el-tag>
-              <el-tag type="success" v-if="scope.row.status+'' === '3'" >发模完成</el-tag>
         </template>
           </el-table-column>
           <el-table-column label="发模数量">
@@ -56,10 +48,14 @@
           </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
-            <el-button v-if="scope.row.status+'' == '-1' ||scope.row.status+'' == '-2' "
+            <el-button v-if="scope.row.cheJian+'' === ''"
               size="mini"
               type="primary"
-              @click="toupdate(scope.row)">重新提交</el-button>
+              @click="toAddFaMoInfo(scope.row)">确认发模完成</el-button>
+              <el-button
+                size="mini"
+                type="warning"
+                @click="toinfo(scope.row)">详情</el-button>
           </template>
           </el-table-column>
         </el-table>
@@ -71,32 +67,10 @@
     </div>
   </div>
   <!-- 发模申请 -->
-  <el-dialog title="发模申请" :visible.sync="dialogFormVisible" width='40%' v-loading="tableLoading">
-    <div class="form-box">
-      <el-form ref="form" :model="form" label-width="120px" >
-        <el-form-item label="车牌号:" prop="chePai">
-          <el-input v-model="form.chePai" ></el-input>
-        </el-form-item>
-        <el-form-item label="驾驶员手机号:" prop="driverPhone">
-          <el-input v-model="form.driverPhone" ></el-input>
-        </el-form-item>
-        <el-form-item label="是否有等额模具留厂：" prop="liuChang">
-          <el-switch v-model="form.liuChang"></el-switch>
-        </el-form-item>
-        <el-form-item label="发模数量：" prop="faMoNum">
-           <el-input-number v-model="form.faMoNum" @change="handleChange" :min="1"></el-input-number>
-        </el-form-item>
-        <el-form-item label="留厂数量：" prop="liuChangNum">
-           <el-input-number v-model="form.liuChangNum" @change="handleChange" :min="0"></el-input-number>
-        </el-form-item>
-        <el-form-item v-if="this.itemQianKuan.faMoType+ '' != '2'" label="欠款原因：" prop="faMoRemark" required>
-          <el-input type="textarea" v-model="form.faMoRemark"></el-input>
-        </el-form-item>
-      </el-form>
-    </div>
-    <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="updateFaMo">重新提交</el-button>
-      <el-button  @click="quxiao">取 消</el-button>
+  <el-dialog title="确认发模完成" :visible.sync="dialogFormVisible" width='40%' v-loading="tableLoading">
+      <div slot="footer" class="dialog-footer">
+      <el-button type="primary" @click="addFaMoInfo">确认</el-button>
+      <el-button @click="quxiao">取 消</el-button>
     </div>
   </el-dialog>
 </div>
@@ -105,13 +79,14 @@
 export default {
   data() {
     return {
-      itemQianKuan:{},
-      kaiPiao:{
-        projectId:'',
-        projectName:''
+      multipleSelection: [],
+      itemQianKuan: {},
+      kaiPiao: {
+        projectId: '',
+        projectName: ''
       },
-      form:{},
-      form1:{},
+      form: {},
+      form1: {},
       dialogFormVisible1: false,
       dialogFormVisible: false,
       dialogFormVisible2: false,
@@ -126,61 +101,71 @@ export default {
       pagesize: 10,
       select_word: '',
       tableData: [],
-      itemRuKu:{},
+      itemRuKu: {},
       tableLoading: false,
-      itemKaiPiao:{},
+      itemKaiPiao: {},
+      itemId:''
     }
   },
   methods: {
-    quxiao(){
+    handleSelectionChange(val) {
+      this.multipleSelection = val;
+    },
+    toinfo(item) {
+      //console.log(item);
+      this.$router.push('/plant/order/info/' + item.orderId)
+    },
+    quxiao() {
       this.dialogFormVisible = false;
     },
-    toupdate(item){
-      this.itemQianKuan = item;
-      this.dialogFormVisible = true;
-      this.form = item;
-      // this.form = {
-      //   addUserId:"",
-      //   addUserName:"",
-      //   orderId:"",
-      //   orderName:"",
-      //   faMoRemark:"",
-      //   faMoType:'0',
-      //   liuChangNum: 0,
-      //   faMoNum: 1,
-      //   liuChang: false,
-      // };
+    deleteManyEmps() {
+      this.$confirm('此操作将[' + this.multipleSelection.length + ']条订单一并发模, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        var ids = '';
+        for (var i = 0; i < this.multipleSelection.length; i++) {
+          ids += this.multipleSelection[i].id + ",";
+        }
+        this.itemId = ids;
+        this.toAddFaMoInfo();
+      }).catch(() => {});
     },
-    updateFaMo(){
-      let self = this;
-      if( self.itemQianKuan.faMoType+'' !=='2' && self.form.faMoRemark === ''){
-        self.$message.error("请填写欠款原因")
-        return;
+    toAddFaMoInfo(item) {
+      if(item != null && item !== '' && item !== 'undefined'){
+        this.itemId = item.id;
       }
-      // self.itemQianKuan.faMoNum = this.form.faMoNum;
-      // self.itemQianKuan.liuChang = this.form.liuChang;
-      // self.itemQianKuan.liuChangNum = this.form.liuChangNum;
-      self.tableLoading = true;
-      this.postRequest("/fa/mo/update", self.form).then(resp => {
-        self.tableLoading = false;
+      this.dialogFormVisible = true;
+      this.form = {};
+      this.form.chePai = item.chePai;
+      this.form.jiaShiYuan = item.driverPhone;
+    },
+    addFaMoInfo() {
+      let data = {
+        id:this.itemId,
+        cheJian:this.uid
+      }
+      let orderId = this.itemId;
+      this.postRequest("/fa/mo/que/ren", data).then(resp => {
         if (resp && resp.status == 200 && resp.data.code == 0) {
           this.$message.success("执行成功")
           this.dialogFormVisible = false;
           this.getCollectMouldList()
-        }else {
+        } else {
           this.$message.error("执行失败")
         }
       })
     },
-    toShenHe(item){
+    toShenHe(item) {
       this.dialogFormVisible = true;
       this.itemRuKu = item;
       this.form.kuFangRemark = "";
     },
     handleChange(value) {},
-    toinfo(id) {
-      this.$router.push('/order/info/' + id)
-    },
+    // toinfo(id) {
+    //   this.$router.push('/order/info/' + id)
+    // },
     toadd() {
       this.$router.push('/order/add')
     },
@@ -196,10 +181,10 @@ export default {
     // 获取订单列表
     getCollectMouldList() {
       let _this = this
-      this.getRequest("/fa/mo/wait/listbypage?page=" + this.currentPage + "&size=" + this.pagesize +"&addUserId=" +this.uid).then(resp => {
+      this.getRequest("/fa/mo/listbypage?page=" + this.uid +"&size=" + this.pagesize + "&status=3").then(resp => {
         _this.tableLoading = false;
         if (resp && resp.status == 200 && resp.data.code == 0) {
-          _this.tableData = resp.data.data.waitfamolist
+          _this.tableData = resp.data.data.famolist
           _this.totalnum = resp.data.data.count
         }
       })
@@ -214,8 +199,7 @@ export default {
     this.uid = localStorage.getItem('cp_uid');
     this.name = localStorage.getItem('cp_name');
   },
-  computed: {
-  }
+  computed: {}
 }
 </script>
 <style scoped>

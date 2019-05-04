@@ -19,9 +19,9 @@
 
                 <el-table-column label="发模类型" prop="faMoType">
                   <template slot-scope="scope">
-                    <el-tag v-if="scope.row.faMoType+'' === '1'" type="primary">欠款发模</el-tag>
-                    <el-tag v-if="scope.row.faMoType+'' === '2'" type="info">部分到款发模</el-tag>
-                    <el-tag v-if="scope.row.faMoType+'' === '3'" type="info">全款发模</el-tag>
+                    <el-tag v-if="scope.row.faMoType+'' === '0'" type="primary">欠款发模</el-tag>
+                    <el-tag v-if="scope.row.faMoType+'' === '1'" type="info">部分到款发模</el-tag>
+                    <el-tag v-if="scope.row.faMoType+'' === '2'" type="info">全款发模</el-tag>
               </template>
                 </el-table-column>
                 <el-table-column label="审核状态" prop="aduit">
@@ -37,8 +37,8 @@
                 </el-table-column>
                 <el-table-column label="是否等额留厂" prop="liuChang">
                   <template slot-scope="scope">
-                  <el-tag v-if="scope.row.status+'' === 'true'" type="primary">是</el-tag>
-                  <el-tag v-if="scope.row.status+'' === 'false'" type="danger">否</el-tag>
+                    <el-tag v-if="scope.row.liuChang+'' === 'true' && scope.row.liuChang+'' !== ''">有</el-tag>
+                    <el-tag v-if="scope.row.liuChang+'' === 'false' || scope.row.liuChang+'' === ''">无</el-tag>
                   </template>
                 </el-table-column>
 
@@ -68,9 +68,9 @@
                 </el-table-column>
                 <el-table-column label="发模类型" prop="faMoType">
                   <template slot-scope="scope">
-                    <el-tag v-if="scope.row.faMoType+'' === '1'" type="primary">欠款发模</el-tag>
-                    <el-tag v-if="scope.row.faMoType+'' === '2'" type="info">部分到款发模</el-tag>
-                    <el-tag v-if="scope.row.faMoType+'' === '3'" type="success">全款发模</el-tag>
+                    <el-tag v-if="scope.row.faMoType+'' === '0'" type="primary">欠款发模</el-tag>
+                    <el-tag v-if="scope.row.faMoType+'' === '1'" type="info">部分到款发模</el-tag>
+                    <el-tag v-if="scope.row.faMoType+'' === '2'" type="success">全款发模</el-tag>
               </template>
                 </el-table-column>
                 <el-table-column label="审核状态" prop="aduit">
@@ -86,8 +86,8 @@
                 </el-table-column>
                 <el-table-column label="是否等额留厂" prop="liuChang">
                   <template slot-scope="scope">
-                  <el-tag v-if="scope.row.status+'' === 'true'" type="primary">是</el-tag>
-                  <el-tag v-if="scope.row.status+'' === 'false'" type="danger">否</el-tag>
+                    <el-tag v-if="scope.row.liuChang+'' === 'true' && scope.row.liuChang+'' !== ''">有</el-tag>
+                    <el-tag v-if="scope.row.liuChang+'' === 'false' || scope.row.liuChang+'' === ''">无</el-tag>
                   </template>
                 </el-table-column>
                 <el-table-column label="创建时间" prop="createTime">
@@ -116,9 +116,9 @@
                 </el-table-column>
                 <el-table-column label="发模类型" prop="faMoType">
                   <template slot-scope="scope">
-                    <el-tag v-if="scope.row.faMoType+'' === '1'" type="primary">欠款发模</el-tag>
-                    <el-tag v-if="scope.row.faMoType+'' === '2'" type="info">部分到款发模</el-tag>
-                    <el-tag v-if="scope.row.faMoType+'' === '3'" type="success">全款发模</el-tag>
+                    <el-tag v-if="scope.row.faMoType+'' === '0'" type="primary">欠款发模</el-tag>
+                    <el-tag v-if="scope.row.faMoType+'' === '1'" type="info">部分到款发模</el-tag>
+                    <el-tag v-if="scope.row.faMoType+'' === '2'" type="success">全款发模</el-tag>
               </template>
                 </el-table-column>
                 <el-table-column label="审核状态" prop="aduit">
@@ -135,8 +135,8 @@
                 </el-table-column>
                 <el-table-column label="是否等额留厂" prop="liuChang">
                   <template slot-scope="scope">
-                  <el-tag v-if="scope.row.status+'' === 'true'" type="primary">是</el-tag>
-                  <el-tag v-if="scope.row.status+'' === 'false'" type="danger">否</el-tag>
+                    <el-tag v-if="scope.row.liuChang+'' === 'true' && scope.row.liuChang+'' !== ''">有</el-tag>
+                    <el-tag v-if="scope.row.liuChang+'' === 'false' || scope.row.liuChang+'' === ''">无</el-tag>
                   </template>
                 </el-table-column>
 
@@ -173,10 +173,16 @@
         <el-form-item label="申请人：">
           <el-input  v-model="form.addUserName" :disabled="true"></el-input>
         </el-form-item>
+        <el-form-item label="申请人：">
+          <el-input  v-model="form.addUserName" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="车牌号：">
+          <el-input  v-model="form.chePai" :disabled="true"></el-input>
+        </el-form-item>
         <el-form-item label="发模类型：">
-          <span v-if="form.faMoType+'' === '1'">欠款发模</span>
-          <span v-if="form.faMoType+'' === '2'">部分到款发模</span>
-          <span v-if="form.faMoType+'' === '3'">全款发模</span>
+          <span v-if="form.faMoType+'' === '0'">欠款发模</span>
+          <span v-if="form.faMoType+'' === '1'">部分到款发模</span>
+          <span v-if="form.faMoType+'' === '2'">全款发模</span>
         </el-form-item>
         <el-form-item label="付款金额：">
           <!-- <el-input  v-model="form.order.financeJinE" :disabled="true"></el-input> -->
@@ -255,9 +261,10 @@ export default {
       }
       this.postRequest("/fa/mo/check", params).then(resp => {
         if(resp && resp.status == 200 && resp.data.code == 0) {
+            this.getCollectMouldList(1,this.currentPage0, this.pagesize0);
             this.$message.success("审核成功");
             this.dialogFormVisible = false;
-            this.tongGuoShenHe(0);
+
           }else{
             this.$message.error("审核失败");
           }
@@ -274,7 +281,7 @@ export default {
     },
     tongGuoShenHe(item){
       if(item.index == 0){
-        this.getCollectMouldList(0, this.currentPage0, this.pagesize0)
+        this.getCollectMouldList(1, this.currentPage0, this.pagesize0)
       }else if(item.index == 1){
         this.getCollectMouldList(2, this.currentPage1, this.pagesize1)
       }else if(item.index == 2){

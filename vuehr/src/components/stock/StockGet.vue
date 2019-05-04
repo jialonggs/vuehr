@@ -21,9 +21,15 @@
             </el-table-column>
             <el-table-column prop="wuLiaoName" label="物料">
             </el-table-column>
+            <el-table-column prop="wuLiaoName" label="纹理编号">
+            </el-table-column>
+            <el-table-column prop="wenliChengCi" label="花纹层次">
+            </el-table-column>
             <el-table-column prop="wuLiaoNum" label="数量(张)">
             </el-table-column>
             <el-table-column prop="liaoJiang" label="料浆">
+            </el-table-column>
+            <el-table-column prop="remark" label="备注">
             </el-table-column>
             <el-table-column prop="addUserName" label="下单人">
             </el-table-column>

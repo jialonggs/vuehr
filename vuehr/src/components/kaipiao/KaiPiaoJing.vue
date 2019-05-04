@@ -273,6 +273,9 @@
               <el-form-item label="单 位：" prop="danWei">
                 <el-input v-model="kaiPiao.danWei"  :disabled="true"></el-input>
               </el-form-item>
+              <el-form-item label="欠款开票原因：" prop="shangWuRemark">
+                <el-input v-model="kaiPiao.shangWuRemark" :disabled="true"></el-input>
+              </el-form-item>
             </div>
           </el-col>
           <el-col :span="12">
@@ -335,7 +338,7 @@
       </el-form>
     </div>
     <div slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="tongGuo(1)">通 过</el-button>
+      <el-button type="primary" @click="tongGuo(2)">通 过</el-button>
       <el-button type="danger" @click="innerVisible = true">驳 回</el-button>
     </div>
     <el-dialog width="30%" title="驳回原因" :visible.sync="innerVisible" append-to-body>

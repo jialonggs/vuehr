@@ -9,13 +9,44 @@
       </el-breadcrumb>
     </div>
     <el-container>
-      <el-header style="padding: 0px;display:flex;justify-content:space-between;align-items: center;margin-top:20px;">
+      <el-card class="box-card" shadow="never" style="margin-top:25px;">
         <div class="handle-box">
-          <el-input v-model="select_word" placeholder="筛选关键词" class="handle-input mr10" icon="search"></el-input>
+          <el-row :gutter="10">
+            <el-col :span="6">
+                纹理代码:<el-input v-model="item_wenli" placeholder="请输入纹理代码" class="handle-input mr10" icon="search"></el-input>
+            </el-col>
+            <el-col :span="6"><div class="grid-content bg-purple">
+                  订单编号:<el-input v-model="item_orderId" placeholder="请输入订单编号" class="handle-input mr10" icon="search"></el-input>
+            </div></el-col>
+            <!-- <el-col :span="6"><div class="grid-content bg-purple">
+                  单位：<el-select v-model="select_unit" clearable  placeholder="请选择客户单位">
+                        <el-option
+                          v-for="item in allUnit"
+                          :key="item.id"
+                          :label="item.clientCompanyName"
+                          :value="item.id">
+                        </el-option>
+                      </el-select>
+            </div></el-col> -->
+          </el-row>
         </div>
+        <div class="handle-box">
+          <el-button type="primary" icon="el-icon-search" @click="chaXun()">搜索</el-button>
+        </div>
+      </el-card>
+      <el-header style="padding: 0px;display:flex;justify-content:space-between;align-items: center;margin-top:0px;">
+        <!-- <div class="handle-box">
+          <el-input v-model="select_word" placeholder="筛选关键词" class="handle-input mr10" icon="search"></el-input>
+        </div> -->
+
       </el-header>
       <el-main style="padding-left: 0px;padding-top: 0px">
         <el-table :data="tableData" stripe style="width: 100%" v-loading="tableLoading">
+          <el-table-column label="订单编号" prop="orderId">
+            <template slot-scope="scope">
+              {{scope.row.orderId}}
+            </template>
+          </el-table-column>
           <el-table-column label="订单名称" prop="orderName">
             <template slot-scope="scope">
               {{scope.row.order.orderName}}
@@ -74,6 +105,8 @@ export default {
   },
   data() {
     return {
+      item_wenli:"",
+      item_orderId:"",
       orderTitle:'',
       techCard:{},
       itemOrderId:'',
@@ -107,6 +140,9 @@ export default {
     }
   },
   methods: {
+    chaXun(){
+      this.getCollectMouldList();
+    },
     showChild(data){
       this.nowTab = 1;
     },
@@ -156,7 +192,8 @@ export default {
     // 获取订单列表
     getCollectMouldList() {
       let _this = this
-      this.getRequest("/tech/added/listbypage?page=" + this.currentPage + "&size=" + this.pagesize ).then(resp => {
+      this.getRequest("/tech/added/listbypage?page=" + this.currentPage + "&size=" + this.pagesize+
+    "&wenli=" + this.item_wenli + "&orderId=" + this.item_orderId ).then(resp => {
         // _this.tableLoading = false;
         if (resp && resp.status == 200 && resp.data.code == 0) {
           _this.tableData = resp.data.data.stayorderlist

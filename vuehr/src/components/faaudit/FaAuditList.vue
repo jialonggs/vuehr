@@ -19,9 +19,9 @@
 
                 <el-table-column label="发模类型" prop="faMoType">
                   <template slot-scope="scope">
-                    <el-tag v-if="scope.row.faMoType+'' === '1'" type="primary">欠款发模</el-tag>
-                    <el-tag v-if="scope.row.faMoType+'' === '2'" type="info">部分到款发模</el-tag>
-                    <el-tag v-if="scope.row.faMoType+'' === '3'" type="info">全款发模</el-tag>
+                    <el-tag v-if="scope.row.faMoType+'' === '0'" type="primary">欠款发模</el-tag>
+                    <!-- <el-tag v-if="scope.row.faMoType+'' === '2'" type="info">部分到款发模</el-tag> -->
+                    <el-tag v-if="scope.row.faMoType+'' === '2'" type="info">全款发模</el-tag>
               </template>
                 </el-table-column>
                 <el-table-column label="审核状态" prop="aduit">
@@ -68,9 +68,9 @@
                 </el-table-column>
                 <el-table-column label="发模类型" prop="faMoType">
                   <template slot-scope="scope">
-                    <el-tag v-if="scope.row.faMoType+'' === '1'" type="primary">欠款发模</el-tag>
-                    <el-tag v-if="scope.row.faMoType+'' === '2'" type="info">部分到款发模</el-tag>
-                    <el-tag v-if="scope.row.faMoType+'' === '3'" type="success">全款发模</el-tag>
+                    <el-tag v-if="scope.row.faMoType+'' === '0'" type="primary">欠款发模</el-tag>
+                    <!-- <el-tag v-if="scope.row.faMoType+'' === '2'" type="info">部分到款发模</el-tag> -->
+                    <el-tag v-if="scope.row.faMoType+'' === '2'" type="info">全款发模</el-tag>
               </template>
                 </el-table-column>
                 <el-table-column label="审核状态" prop="aduit">
@@ -116,9 +116,9 @@
                 </el-table-column>
                 <el-table-column label="发模类型" prop="faMoType">
                   <template slot-scope="scope">
-                    <el-tag v-if="scope.row.faMoType+'' === '1'" type="primary">欠款发模</el-tag>
-                    <el-tag v-if="scope.row.faMoType+'' === '2'" type="info">部分到款发模</el-tag>
-                    <el-tag v-if="scope.row.faMoType+'' === '3'" type="success">全款发模</el-tag>
+                    <el-tag v-if="scope.row.faMoType+'' === '0'" type="primary">欠款发模</el-tag>
+                    <!-- <el-tag v-if="scope.row.faMoType+'' === '2'" type="info">部分到款发模</el-tag> -->
+                    <el-tag v-if="scope.row.faMoType+'' === '2'" type="info">全款发模</el-tag>
               </template>
                 </el-table-column>
                 <el-table-column label="审核状态" prop="aduit">
@@ -173,10 +173,16 @@
         <el-form-item label="申请人：">
           <el-input  v-model="form.addUserName" :disabled="true"></el-input>
         </el-form-item>
+        <el-form-item label="车牌号：">
+          <el-input  v-model="form.chePai" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="驾驶员电话：">
+          <el-input  v-model="form.driverPhone" :disabled="true"></el-input>
+        </el-form-item>
         <el-form-item label="发模类型：">
-          <span v-if="form.faMoType+'' === '1'">欠款发模</span>
-          <span v-if="form.faMoType+'' === '2'">部分到款发模</span>
-          <span v-if="form.faMoType+'' === '3'">全款发模</span>
+          <span v-if="form.faMoType+'' === '0'">欠款发模</span>
+          <span v-if="form.faMoType+'' === '1'">部分到款发模</span>
+          <span v-if="form.faMoType+'' === '2'">全款发模</span>
         </el-form-item>
         <el-form-item label="付款金额：">
           <!-- <el-input  v-model="form.order.financeJinE" :disabled="true"></el-input> -->

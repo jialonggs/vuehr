@@ -50,7 +50,7 @@
                 <el-button
                   size="mini"
                   type="primary"
-                  @click="toChaKan(scope.row)">售后回执单</el-button>
+                  @click="toChaKan(scope.row)">审核售后单</el-button>
             </template>
               </el-table-column>
           </el-table>
@@ -63,38 +63,163 @@
     </div>
   </div>
   <!-- 审核步骤 -->
-  <el-dialog title="分配销售人员" :visible.sync="dialogFormVisible" width='40%'>
-      <div class="form-box">
-          <el-form ref="form" :model="form" label-width="120px">
-              <el-form-item label="备注：">
-                  <el-input type="textarea" v-model="form.remark"></el-input>
-              </el-form-item>
-              <el-form-item label="下载原文件" prop="remark">
-              <template >
-                <a :href="wen_jian_url" download="w3logo" style="color:blue;">下载原文件</a>
-          </template>
-              </el-form-item>
-          </el-form>
+  <el-dialog title="售后行政单" :visible.sync="dialogFormVisible2" width='80%' v-loading="tableLoading2">
+    <div class="form-box">
+      <div>
+        <h3>总监信息</h3>
+        <p>前往时间： {{itemShouHou.toTime}}</p>
+        <p>预计时间：{{itemShouHou.days}}</p>
+        <p>始派地点：{{itemShouHou.diDian}}</p>
+        <p>备注：{{itemShouHou.ZJremark}}</p>
       </div>
-      <div style="border: 1px dashed #d9d9d9;width:100%;min-height:358px;">
-        <el-row :gutter="20" style="margin-top:10px;">
-          <el-col :span="6" v-for="imageUrl in imageUrls ">
-            <el-card :body-style="{ padding: '0px' }" class="mould-card">
-              <img class="image" v-bind:src="imageUrl" style="height:320px;">
-              <div style="text-align:center;">
-                <el-button type="text" @click="delMouldImage(imageUrl)"><i class="el-icon-error" style="color:red;"></i></el-button>
-              </div>
-            </el-card>
+      <div style="width:100%;height:1px;border-top:1px solid;margin-bottom:15px;"></div>
+      <el-form ref="form" :model="xzOrder" label-width="120px" >
+        <el-row :gutter="20">
+       <el-col :span="12"><div class="grid-content bg-purple">
+         <el-form-item label="客户单位："  prop="danwei">
+           <el-input v-model="xzOrder.danwei" :disabled="true"></el-input>
+         </el-form-item>
+         <el-form-item label="单位地址：" prop="address">
+           <el-input v-model="xzOrder.address" :disabled="true"></el-input>
+         </el-form-item>
+         <el-form-item label="备注：" prop="contactContent">
+            <el-input v-model="xzOrder.contactContent" :disabled="true"></el-input>
+         </el-form-item>
+       </div></el-col>
+       <el-col :span="12"><div class="grid-content bg-purple">
+         <el-form-item label="预计周期：" prop="yuJi">
+           <el-date-picker v-model="xzOrder.yuJi"  :disabled="true" style="width:50%" format="yyyy 年 MM 月 dd 日 HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择日期时间">
+           </el-date-picker>
+            <!-- <el-input v-model="xzOrder.yuJi" ></el-input> -->
+         </el-form-item>
+         <el-form-item label="实施日期：" prop="startDate">
+           <el-date-picker v-model="xzOrder.startDate"  :disabled="true" style="width:50%" format="yyyy 年 MM 月 dd 日 HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="选择日期时间">
+           </el-date-picker>
+           <!-- <el-input v-model="xzOrder.startDate" ></el-input> -->
+         </el-form-item>
+         <el-form-item label="售后人员：" prop="userName">
+            <el-input v-model="xzOrder.userName" :disabled="true"></el-input>
+         </el-form-item>
+       </div>
+       </el-col>
+        </el-row>
+        <div style="width:100%;height:1px;border-top:1px solid;margin-bottom:15px;"></div>
+        中途转程
+        <el-row :gutter="20">
+       <el-col :span="12"><div class="grid-content bg-purple">
+         <el-form-item label="地 点：" prop="transferAddress" >
+           <el-input v-model="xzOrder.transferAddress" :disabled="true"></el-input >
+         </el-form-item>
+         <el-form-item label="单 位：" prop="transferCompany">
+            <el-input v-model="xzOrder.transferCompany" :disabled="true"></el-input>
+         </el-form-item>
+       </div></el-col>
+       <el-col :span="12"><div class="grid-content bg-purple">
+         <el-form-item label="问 题：" prop="transferProblem">
+           <el-input v-model="xzOrder.transferProblem" :disabled="true"></el-input>
+         </el-form-item>
+         <el-form-item label="联系人：" prop="transferContact">
+            <el-input v-model="xzOrder.transferContact" :disabled="true"></el-input>
+         </el-form-item>
+       </div>
+       </el-col>
+        </el-row>
+        <div style="width:100%;height:1px;border-top:1px solid;margin-bottom:15px;"></div>
+        <el-row>
+          <el-col>
+            <el-form-item label="售后工具：" prop="fuKuanType">
+              <el-checkbox-group v-model="checkedGongJus" :disabled="true">
+              <el-checkbox v-for="gj in gongjus" :label="gj" :key="gj">{{gj}}</el-checkbox>
+            </el-checkbox-group>
+            </el-form-item>
           </el-col>
         </el-row>
-      </div>
+        <el-row>
+          <el-col>
+            <el-form-item label="售后材料：" prop="fuKuanType">
+               <span>砂：</span>
+               <el-checkbox-group v-model="checkedshas" :disabled="true">
+               <el-checkbox v-for="sha in shas" :label="sha" :key="sha">{{sha}}</el-checkbox>
+               </el-checkbox-group>
+              <span>洗模用品：</span>
+              <el-checkbox-group v-model="checkedyps" :disabled="true">
+              <el-checkbox v-for="yp in yps" :label="yp" :key="yp">{{yp}}</el-checkbox>
+              </el-checkbox-group>
+              <span>其它材料：</span>
+              <el-checkbox-group v-model="checkedcls" :disabled="true">
+              <el-checkbox v-for="cl in cls" :label="cl" :key="cl">{{cl}}</el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col>
+            <el-form-item label="后期补充：" prop="fuKuanType">
+              <el-checkbox-group v-model="checkedhqs" :disabled="true">
+              <el-checkbox v-for="hq in hqs" :label="hq" :key="hq">{{hq}}</el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+            <el-form-item label="后期补充详情：" prop="houQiRemark">
+                <el-input v-model="xzOrder.houQiRemark" :disabled="true"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row :gutter="20">
+          <el-col :span="12">
+            <el-form-item label="外派人员：" prop="waiPaiRenYuan">
+                <el-input v-model="xzOrder.waiPaiRenYuan" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item label="交通方式：" prop="jiaoTong">
+                <el-input v-model="xzOrder.jiaoTong" :disabled="true"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col>
+            <el-form-item label="备注：" prop="remark">
+                <el-input v-model="xzOrder.remark" :disabled="true"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+    </div>
+    <div slot="footer" class="dialog-footer">
+      <el-button type="primary" @click="toUpdate()">通 过 </el-button>
+      <!-- <el-button  @click="dialogFormVisible2=false">驳 回</el-button> -->
+    </div>
   </el-dialog>
 </div>
 </template>
 <script>
+const gjOptions = ['光泽仪器','喷砂枪','软管','模具枪','防护眼镜','喷砂服','工作服','警示牌'];
+const shaOptions = ['180目','100目','80目','珠','其他'];
+const ypOptions = ['汽油','抹布','纸巾'];
+const clOptions = ['棕胶带','油石','干粉','其他','费用'];
+const hqOptions = ['费用','材料'];
 export default {
   data() {
     return {
+      checkedGongJus:[],
+        checkedshas:[],
+        checkedyps:[],
+        checkedhqs:[],
+        checkedcls:[],
+        gongjus:gjOptions,
+        shas:shaOptions,
+        yps:ypOptions,
+        hqs:hqOptions,
+        cls:clOptions,
+      tableLoading2:false,
+      dialogFormVisible2:false,
+      itemShouHou:{
+        toTime:'',
+        days:'',
+        ZJremark:'',
+        diDian:''
+      },
+      xzOrder:{},
       wen_jian_url:[],
       imageUrls:[],
       restaurants4:[],
@@ -117,13 +242,39 @@ export default {
   },
   methods: {
     toChaKan(item){
-      let remark = item.shBaoGao.remark;
-      let fileUrl = item.shBaoGao.fileUrl;
-      let picUrls = item.shBaoGao.picUrls;
-      this.form.remark = remark;
-      this.wen_jian_url = fileUrl;
-      this.imageUrls = this.splitUrl(picUrls);
-      this.dialogFormVisible = true;
+      if(item.shXzOrder.gongJu.length > 0){
+        this.checkedGongJus = item.shXzOrder.gongJu.split(',');
+      }
+      if(item.shXzOrder.caiLiaoSha.length > 0){
+        this.checkedshas = item.shXzOrder.caiLiaoSha.split(',');
+      }
+      if(item.shXzOrder.caiLiaoYongPin.length > 0){
+        this.checkedyps = item.shXzOrder.caiLiaoYongPin.split(',');
+      }
+      if(item.shXzOrder.caiLiao.length > 0){
+        this.checkedcls = item.shXzOrder.caiLiao.split(',');
+      }
+      if(item.shXzOrder.houQi.length > 0){
+        this.checkedhqs = item.shXzOrder.houQi.split(',');
+      }
+      this.dialogFormVisible2 = true;
+      this.xzOrder = item.shXzOrder;
+      this.xzOrder.danwei = item.danwei;
+      this.xzOrder.address = item.address;
+      this.xzOrder.userName = item.userName;
+      this.itemShouHou = item;
+    },
+    // 通过
+    toUpdate(){
+      this.getRequest("/after/sale/checked/xz?orderId="+this.itemShouHou.orderId + "&status=" + 4).then(resp => {
+        if (resp && resp.status == 200 && resp.data.code == 0) {
+          this.$message.success("提交成功");
+          this.dialogFormVisible2 = false;
+          this.getCollectMouldList();
+        } else {
+          this.$message.error("提交失败");
+        }
+      })
     },
     splitUrl(item) {
       let picurl = item;
@@ -194,10 +345,9 @@ export default {
     getCollectMouldList() {
       let _this = this
       this.getRequest("/after/sale/job/list?page=" + this.currentPage + "&size=" + this.pagesize +
-    "&userId=" + this.uid + "&status=2" ).then(resp => {
+    "&userId=" + this.uid + "&status=3" ).then(resp => {
         _this.tableLoading = false;
         if (resp && resp.status == 200 && resp.data.code == 0) {
-
           this.tableData = resp.data.data.shouhoulist
           this.totalnum = resp.data.data.count
         }

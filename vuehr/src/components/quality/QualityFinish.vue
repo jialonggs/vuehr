@@ -37,8 +37,15 @@
               </el-table-column>
               <el-table-column  label="紧急程度">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.urgency+'' === '0'" type="primary">一般</el-tag>
-                  <el-tag v-if="scope.row.urgency+'' === '1'" type="danger">紧急</el-tag>
+                  <el-tag v-if="scope.row.order.urgency+'' === '0'" type="primary">不急</el-tag>
+                  <el-tag v-if="scope.row.order.urgency+'' === '1'" type="danger">正常</el-tag>
+                  <el-tag v-if="scope.row.order.urgency+'' === '2'" type="primary">急C</el-tag>
+                  <el-tag v-if="scope.row.order.urgency+'' === '3'" type="danger">急B</el-tag>
+                  <el-tag v-if="scope.row.order.urgency+'' === '4'" type="primary">急A</el-tag>
+                  <el-tag v-if="scope.row.order.urgency+'' === '5'" type="danger">紧急C</el-tag>
+                  <el-tag v-if="scope.row.order.urgency+'' === '6'" type="primary">紧急B</el-tag>
+                  <el-tag v-if="scope.row.order.urgency+'' === '7'" type="danger">紧急A</el-tag>
+                  <el-tag v-if="scope.row.order.urgency+'' === '8'" type="danger">特急</el-tag>
             </template>
               </el-table-column>
               <el-table-column label="操作">
