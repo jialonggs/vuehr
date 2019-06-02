@@ -27,8 +27,8 @@
                       <el-input placeholder="请输入订单名称" style="width:217px;" v-model="ruleForm.orderName"></el-input>
                     </el-form-item>
                     <el-form-item label="所属项目：" prop="projectId">
-                      <el-select v-model='ruleForm.projectId' placeholder="请选择所属项目">
-                        <el-option v-for="item in restaurants3" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                      <el-select v-model='ruleForm.projectId'  filterable placeholder="请选择所属项目">
+                        <el-option v-for="item in restaurants3" :key="item.value" :label="item.label"  :value="item.value"></el-option>
                       </el-select>
                     </el-form-item>
                     <el-form-item label="车间负责人：" prop="managerId">
@@ -144,7 +144,7 @@
                 <el-form-item label="倍数：" prop="times">
                   <el-input v-model="elform1.times"  style="width:30%;" controls-position="right" ></el-input>
                 </el-form-item>
-                <el-form-item label="加工面积：" prop="area">
+                <el-form-item label="实际面积：" prop="area">
                   <el-input-number v-model="elform1.area" controls-position="right" :min="0"></el-input-number>
                 </el-form-item>
                 <span style="color:red">面积不能为0，请填写大于0的数字</span>
@@ -168,8 +168,17 @@
                 <el-col :span='4' v-loading="tree_loading">
                   <el-input placeholder="输入关键字进行过滤" v-model="filterText">
                   </el-input>
-                  <el-tree class="filter-tree" @check-change="toChangeCheck" :data="data3" :props="defaultProps" default-expand-all :filter-node-method="filterNode" ref="tree2" show-checkbox node-key="id" style="border-right: 1px solid #e6e6e6;min-height:260px;">
-                  </el-tree>
+                  <template>
+                    <div style="height:600px;">
+                      <el-scrollbar style="height:100%">
+                          <div style="width:400px;" >
+                            <el-tree class="filter-tree" @check-change="toChangeCheck" :data="data3" :props="defaultProps" default-expand-all :filter-node-method="filterNode" ref="tree2" show-checkbox node-key="id" style="border-right: 1px solid #e6e6e6;min-height:260px;">
+                            </el-tree>
+                          </div>
+                      </el-scrollbar>
+                    </div>
+                  </template>
+
                 </el-col>
                 <el-col :span='20'>
                   <div style="min-height:15px;width:100%;">
@@ -375,6 +384,8 @@ import JLApiUtils from '../../utils/JLApiUtils.js';
 export default {
   data() {
     return {
+      page_size:0,
+      page:1,
       table_loading:false,
       udapteBoolean:false,
       wenliData: [],
@@ -436,7 +447,7 @@ export default {
         projectId: '',
         hasRemark: false,
         picUrls: '',
-        urgency: '0',
+        urgency: '1',
         remark: '',
         realityArea: '0',
         expectedTime: '',
@@ -493,7 +504,7 @@ export default {
         }],
         realityArea: [{
           required: true,
-          message: '请输入加工面积',
+          message: '请输入实际面积',
           trigger: 'blur'
         }],
         projectId: [{
@@ -528,7 +539,15 @@ export default {
       this.$refs.tree2.filter(val);
     }
   },
-  methods: {
+    methods: {
+      handleCurrentChange(val) {
+      this.page = val
+      this.getMultiTemplate()
+      },
+      handleSizeChange(val){
+      this.page_size = val
+      this.getMultiTemplate()
+      },
     deleteRow(index, rows) {
        rows.splice(index, 1);
      },

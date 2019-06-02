@@ -37,15 +37,15 @@
               </el-table-column>
               <el-table-column  label="紧急程度">
                 <template slot-scope="scope">
-                  <el-tag v-if="scope.row.order.urgency+'' === '0'" type="primary">不急</el-tag>
-                  <el-tag v-if="scope.row.order.urgency+'' === '1'" type="danger">正常</el-tag>
-                  <el-tag v-if="scope.row.order.urgency+'' === '2'" type="primary">急C</el-tag>
-                  <el-tag v-if="scope.row.order.urgency+'' === '3'" type="danger">急B</el-tag>
-                  <el-tag v-if="scope.row.order.urgency+'' === '4'" type="primary">急A</el-tag>
-                  <el-tag v-if="scope.row.order.urgency+'' === '5'" type="danger">紧急C</el-tag>
-                  <el-tag v-if="scope.row.order.urgency+'' === '6'" type="primary">紧急B</el-tag>
-                  <el-tag v-if="scope.row.order.urgency+'' === '7'" type="danger">紧急A</el-tag>
-                  <el-tag v-if="scope.row.order.urgency+'' === '8'" type="danger">特急</el-tag>
+                  <el-tag v-if="scope.row.urgency+'' === '0'" type="primary">不急</el-tag>
+                  <el-tag v-if="scope.row.urgency+'' === '1'" type="danger">正常</el-tag>
+                  <el-tag v-if="scope.row.urgency+'' === '2'" type="primary">急C</el-tag>
+                  <el-tag v-if="scope.row.urgency+'' === '3'" type="danger">急B</el-tag>
+                  <el-tag v-if="scope.row.urgency+'' === '4'" type="primary">急A</el-tag>
+                  <el-tag v-if="scope.row.urgency+'' === '5'" type="danger">紧急C</el-tag>
+                  <el-tag v-if="scope.row.urgency+'' === '6'" type="primary">紧急B</el-tag>
+                  <el-tag v-if="scope.row.urgency+'' === '7'" type="danger">紧急A</el-tag>
+                  <el-tag v-if="scope.row.urgency+'' === '8'" type="danger">特急</el-tag>
             </template>
               </el-table-column>
               <el-table-column label="操作">
@@ -53,7 +53,7 @@
                 <el-button
                   size="mini"
                   type="primary"
-                  @click="toXiangqing">查看详情</el-button>
+                  @click="toXiangqing(scope.row.id)">查看详情</el-button>
             </template>
               </el-table-column>
           </el-table>
@@ -130,7 +130,9 @@ export default {
     }
   },
   methods: {
-
+    toXiangqing(id) {
+      this.$router.push('/plant/order/info/' + id);
+    },
     handleSizeChange(val) {
       this.pagesize = val;
       this.getCollectMouldList();
@@ -145,7 +147,7 @@ export default {
       this.getRequest("/quality/over/listbypage?page=" + this.currentPage + "&size=" + this.pagesize).then(resp => {
         _this.tableLoading = false;
         if (resp && resp.status == 200 && resp.data.code == 0) {
-
+          console.log(resp.data.data.overorderlist);
           this.tableData = resp.data.data.overorderlist
           this.totalnum = resp.data.data.count
         }

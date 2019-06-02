@@ -21,8 +21,7 @@
                     <img  v-bind:src="qrCode" style="width:100px;height:100px;">
                   </div>
                   <div>
-                    <span>http://39.107.78.95:8082/order.html?orderId=</span>
-                    <span>{{urlId}}</span>
+                    <span>http://39.107.78.95:8082/order.html?orderId={{urlId}}</span>
                   </div>
                 </el-col>
               </el-row>
@@ -87,7 +86,7 @@
                     <el-form-item label="加工类型：" prop="machiningType">
                       <el-autocomplete class="inline-input" v-model="ruleForm.machiningType" :fetch-suggestions="querySearch" placeholder="请输入加工类型" @select="handleSelect"></el-autocomplete>
                     </el-form-item>
-                    <el-form-item label="加工面积：" prop="realityArea" >
+                    <el-form-item label="实际面积：" prop="realityArea" >
                       <el-input-number v-model="ruleForm.realityArea" :disabled="true" controls-position="right" :min="0"></el-input-number>
                     </el-form-item>
                     <el-form-item label="倍数：" prop="beiShu">
@@ -106,10 +105,10 @@
             <div style="margin-bottom:15px;">
               <el-card class="box-card" style="margin-top:25px;">
                 <div slot="header" class="clearfix">
-                  <span>纹理列表</span>
+                  <span>纹理列表 <p style="color:red" v-if="planStatus > 0">订单已完成分配，不可变更纹理信息</p></span>
                   </div>
                 <div>
-                  <el-button type="primary" style="float:right"class="el-icon-plus" @click="toAddWenLi">添加</el-button>
+                  <el-button v-if="planStatus==0" type="primary" style="float:right"class="el-icon-plus" @click="toAddWenLi">添加</el-button>
                 </div>
                 <div>
                   <el-table :data="wenliData" border show-summary style="width: 100%">
@@ -121,8 +120,8 @@
                     </el-table-column>
                     <el-table-column fixed="right" label="操作" width="300">
                       <template slot-scope="scope">
-                        <el-button type="text" size="small" @click.native.prevent="toEidtor(scope.row)">编辑</el-button>
-           <el-button
+                        <el-button v-if="planStatus==0" type="text" size="small" @click.native.prevent="toEidtor(scope.row)">编辑</el-button>
+           <el-button v-if="planStatus==0"
              @click.native.prevent="deleteRow(scope.row)"
              type="text"
              size="small">
@@ -143,7 +142,7 @@
                   <el-form-item label="倍数：" prop="times">
                     <el-input v-model="elform1.times" style="width:30%;" controls-position="right" ></el-input>
                   </el-form-item>
-                  <el-form-item label="加工面积：" prop="area" :disabled="true">
+                  <el-form-item label="实际面积：" prop="area" :disabled="true">
                     <el-input-number v-model="elform1.area"  controls-position="right" :min="0"></el-input-number>
                   </el-form-item>
                 </el-form>
@@ -164,7 +163,7 @@
                   <el-form-item label="倍数：" prop="times">
                     <el-input v-model="elform2.times" style="width:30%;" controls-position="right" ></el-input>
                   </el-form-item>
-                  <el-form-item label="加工面积：" prop="area">
+                  <el-form-item label="实际面积：" prop="area">
                     <el-input-number v-model="elform2.area"  controls-position="right" :min="0"></el-input-number>
                   </el-form-item>
                 </el-form>
@@ -207,8 +206,17 @@
                 <el-col :span='4' v-loading="tree_loading">
                   <el-input placeholder="输入关键字进行过滤" v-model="filterText">
                   </el-input>
-                  <el-tree class="filter-tree" @check-change="toChangeCheck" :data="data3" :props="defaultProps" default-expand-all :filter-node-method="filterNode" ref="tree2" show-checkbox node-key="id" style="border-right: 1px solid #e6e6e6;min-height:260px;">
-                  </el-tree>
+                  <template>
+                    <div style="height:600px;">
+                      <el-scrollbar style="height:100%">
+                          <div style="width:400px;" >
+                            <el-tree class="filter-tree" @check-change="toChangeCheck" :data="data3" :props="defaultProps" default-expand-all :filter-node-method="filterNode" ref="tree2" show-checkbox node-key="id" style="border-right: 1px solid #e6e6e6;min-height:260px;">
+                            </el-tree>
+                          </div>
+                      </el-scrollbar>
+                    </div>
+                  </template>
+
                 </el-col>
                 <el-col :span='20'>
                   <div style="min-height:15px;width:100%;">
@@ -430,6 +438,7 @@ import JLApiUtils from '../../utils/JLApiUtils.js';
 export default {
   data() {
     return {
+      planStatus:0,
       elform1:{
         wenliName:'',
         area:'0',
@@ -530,7 +539,7 @@ export default {
         }],
         realityArea: [{
           required: true,
-          message: '请输入加工面积',
+          message: '请输入实际面积',
           trigger: 'blur'
         }],
         projectId: [{
@@ -583,12 +592,17 @@ export default {
       this.innerVisible2 = false;
     },
     toEidtor(itemWenLi){
-      this.elform1 = itemWenLi;
+      this.elform1.id = itemWenLi.id;
+      this.elform1.orderId = itemWenLi.orderId;
+      this.elform1.times = itemWenLi.times;
+      this.elform1.area =itemWenLi.area;
+      this.elform1.wenliName = itemWenLi.wenliName;
       this.innerVisible1 = true;
     },
     toUpdateWenLi(){
-      let times = this.elform1.times
-      let area = this.elform1.area
+      let data1 = this.elform1;
+      let times = data1.times
+      let area = data1.area
       if (times=='undefined' || times <=0) {
         this.$message.error("请正确填写倍数")
         return;
@@ -597,7 +611,7 @@ export default {
         this.$message.error("请正确填写面积")
         return;
       }
-      this.jsonPostRequest("/order/list/update/wenli",this.elform1).then(resp => {
+      this.jsonPostRequest("/order/list/update/wenli",data1).then(resp => {
         if (resp && resp.status == 200 && resp.data.code == 0) {
           this.$message.success("修改成功");
           this.chanel();
@@ -608,19 +622,17 @@ export default {
       })
     },
     chanel(){
-      this.innerVisible1 = false;
       this.elform1 = {
         wenliName:'',
         area:'0',
         times:'1'
       }
+      this.innerVisible1 = false;
     },
     toAddWenLi(){
-      this.elform1 = {
-        wenliName:'',
-        area:'0',
-        times:'1'
-      }
+      this.elform2.wenliName='';
+      this.elform2.area='0';
+      this.elform2.times='1';
       this.innerVisible2 = true;
 
     },
@@ -1119,6 +1131,8 @@ export default {
       this.getRequest("/order/list/info?orderId=" + urlId).then(resp => {
         if (resp && resp.status == 200 && resp.data.code == 0) {
           this.ruleForm = resp.data.data.orderinfo;
+          // console.log(resp.data.data.orderinfo);
+          this.planStatus = resp.data.data.orderinfo.plantStatus;
           this.ruleForm.urgency = this.ruleForm.urgency+'';
           if('undefined' != resp.data.data.orderinfo.picUrls
           && resp.data.data.orderinfo.picUrls.length>0){

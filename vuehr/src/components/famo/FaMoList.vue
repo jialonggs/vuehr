@@ -40,7 +40,7 @@
           </el-table-column>
           <el-table-column label="已付款比例">
             <template slot-scope="scope">
-            <el-tag>{{scope.row.project.financeBiLi}}</el-tag>
+            <el-tag>{{scope.row.project.financeBiLi}} %</el-tag>
           </template>
           </el-table-column>
           <el-table-column label="已付款金额" prop="financeJinE">
@@ -99,7 +99,7 @@
         到款金额 :<el-tag  type="default">{{itemProject.financeJinE}}</el-tag>
       </div>
       <div style="margin-top:5px;">
-        最终优惠价:<el-tag  type="default">{{itemProject.finalBaoJia}}</el-tag>
+        最终优惠价:<el-tag  type="default">{{itemProject.businessBaoJia.finalBaoJia}}</el-tag>
       </div>
       <div style="width:100%;height:1px;border-top:1px solid;margin-bottom:15px;"></div>
       <el-form ref="form" :model="form" label-width="120px" >
@@ -276,7 +276,11 @@ export default {
       itemRuKu:{},
       tableLoading: false,
       itemKaiPiao:{},
-      itemProject:{},
+      itemProject:{
+        businessBaoJia:{
+          finalBaoJia:0
+        }
+      },
     }
   },
   methods: {
@@ -419,6 +423,7 @@ export default {
     "&storageStatus=2" +"&faMoStatus=0" ).then(resp => {
         _this.tableLoading = false;
         if (resp && resp.status == 200 && resp.data.code == 0) {
+          console.log(resp.data.data.needfamolist);
           _this.tableData = resp.data.data.needfamolist
           _this.totalnum = resp.data.data.count
         }

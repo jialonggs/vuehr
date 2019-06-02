@@ -229,6 +229,20 @@
                             <el-row>
                               <el-col :span="8">
                                 <div class="grid-content bg-purple">
+                                  <el-tag type="info">加工面积</el-tag>
+                                </div>
+                              </el-col>
+                              <el-col :span="16">
+                                <div class="grid-content bg-purple-light">
+                                  <span class="msg-span">{{ruleForm.workArea}}</span>
+                                </div>
+                              </el-col>
+                            </el-row>
+                          </div>
+                          <div class="text item">
+                            <el-row>
+                              <el-col :span="8">
+                                <div class="grid-content bg-purple">
                                   <el-tag type="info">倍数</el-tag>
                                 </div>
                               </el-col>
@@ -304,6 +318,15 @@
                   <el-table-column label="创建时间" prop="createTime">
                     <template slot-scope="scope">{{ scope.row.createTime | formatDateTime}}</template>
                   </el-table-column>
+                  <!-- <el-table-column type="expand">
+                   <template slot-scope="props">
+                     <el-form label-position="left" inline class="demo-table-expand">
+                       <el-form-item label="商品名称">
+                         <span>测试</span>
+                       </el-form-item>
+                     </el-form>
+                   </template>
+                 </el-table-column> -->
                   <!-- <el-table-column label="操作">
                     <template slot-scope="scope">
                       <el-button
@@ -369,6 +392,35 @@
                     </el-col>
                   </el-row>
                 </div> -->
+              </div>
+            </el-col>
+          </el-card>
+        </div>
+
+        <div>
+          <el-card class="box-card" style="margin-top:10px;">
+            <div slot="header" class="clearfix">
+              <span style="line-height: 5px;"><el-tag type="danger">烂模信息</el-tag></span>
+            </div>
+            <el-col :span="24">
+              <div class="grid-content bg-purple-dark">
+                <el-table :data="this.lanMoList" border style="width: 100%">
+                    <el-table-column label="序号"  type="index"  width="50">
+                    </el-table-column>
+                    <el-table-column prop="beginTime" label="时间">
+                    </el-table-column>
+                    <el-table-column prop="lanMoTime" label="烂模时间">
+                    </el-table-column>
+                    <el-table-column prop="shenDu" label="烂模总深度">
+                    </el-table-column>
+                    <el-table-column prop="yaoShui" label="烂模药水">
+                    </el-table-column>
+                    <el-table-column prop="addUserName" label="操作人">
+                    </el-table-column>
+                    <el-table-column prop="remark" label="备注">
+                    </el-table-column>
+                        </el-table>
+
               </div>
             </el-col>
           </el-card>
@@ -792,6 +844,7 @@ export default {
       udapteBoolean: false,
       elform: {},
       zhiliang: [],
+      lanMoList:[],
       selRoles: [],
       allRoles: [],
       selRolesBak: [],
@@ -1205,10 +1258,21 @@ export default {
           this.itemOrder = resp.data.data.orderinfo;
           this.ruleForm = resp.data.data.orderinfo;
           this.techId = resp.data.data.orderinfo.techId;
-          let techCard = resp.data.data.orderinfo.techCard;
-          if (techCard !== '') {
-            this.techCard = techCard;
-          }
+          let techCardList = resp.data.data.orderinfo.techCardList;
+          this.lanMoList = resp.data.data.orderinfo.lanMoList;
+          console.log(this.lanMoList);
+          // if (techCardList !== '' && techCardList.length > 0) {
+          //   for (var i = 0; i < techCardList.length; i++) {
+          //     let lanlist = techCardList[i].lanMoList;
+          //     if (lanlist !== '' && lanlist.length > 0) {
+          //       for (var y = 0; y < lanlist.length; y++) {
+          //         lanlist[y].techName = techCardList[i].piWenDaiMa;
+          //         lanMoList.push(lanlist[y]);
+          //       }
+          //     }
+          //   }
+          // }
+          this.lanMoList = lanMoList;
           this.qrCode = resp.data.data.orderinfo.qrCode;
           this.exform = resp.data.data.orderinfo.controlOrderFrom;
           let moulds = resp.data.data.orderinfo.mouldInfoList;

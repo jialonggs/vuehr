@@ -41,6 +41,7 @@
       </template>
           </el-table-column>
           <el-table-column label="已付款比例" prop="financeBiLi">
+            <template slot-scope="scope">{{ scope.row.financeBiLi}}%</template>
           </el-table-column>
           <el-table-column label="已付款金额" prop="financeJinE">
           </el-table-column>

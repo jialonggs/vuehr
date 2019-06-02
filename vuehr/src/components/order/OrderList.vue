@@ -108,6 +108,18 @@
           </el-table-column>
           <el-table-column label="工艺类型" prop="machiningType">
           </el-table-column>
+          <el-table-column  label="质量总监">
+            <template slot-scope="scope">
+                <el-tag
+                  v-for="quality in scope.row.qualityOrderUsers"
+                  :key="quality.id"
+                  type="success"
+                  size="mini"
+                  style="margin-right: 5px"
+                  :disable-transitions="false">{{quality.userName}}
+                </el-tag>
+              </template>
+          </el-table-column>
           <el-table-column label="备忘">
             <template slot-scope="scope">
         <el-tag v-if="scope.row.hasRemark+'' === 'true'" >有</el-tag>
@@ -260,7 +272,7 @@ export default {
         if (resp && resp.status == 200 && resp.data.code == 0) {
           this.tableLoading = false;
           this.tableData = resp.data.data.orderlist
-          console.log(this.tableData);
+          //console.log(this.tableData);
           this.totalnum = resp.data.data.count
         } else {
           console.log("获取列表数据失败");

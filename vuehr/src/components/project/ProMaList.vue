@@ -641,7 +641,7 @@
         <p>剩余开票金额: <el-tag type="danger">{{itemKaiPiao.needKaiPiao}}</el-tag></p>
       </div>
       <div style="width:100%;height:1px;border-top:1px solid;margin-bottom:15px;"></div>
-      <el-form ref="kaiPiao" :model="this.kaiPiao" label-width="120px">
+      <el-form ref="kaiPiao" :rules="rules" :model="this.kaiPiao" label-width="120px">
         <el-row :gutter="20">
           <el-col :span="12">
             <div class="grid-content bg-purple">
@@ -687,11 +687,30 @@
                 </el-radio-group>
               </el-form-item>
               <el-form-item label="开票信息资料：">
-                <div>
+                <el-form-item label="上传文件：" >
+                  <div v-show="wen_jian_url_2 !== ''">
+                    <p style="color: blue;">上传成功</p>
+                  </div>
+                  <div v-show="wen_jian_url_2 === ''">
+                      <vue-core-image-upload :class="['el-button', 'el-button--primary']"
+                      :crop="false"
+                       inputOfFile="imageFile"
+                       :url="upload"
+                      extensions="png,ppt,docx,txt,jpg,xlsx,pdf"
+                      :max-file-size="5242880"
+                      :data="wenjianData" text="上传文件"
+                      :multiple="true"
+                      :multiple-size="30"
+                      credentials="true"
+                      @imageuploaded="imageupwenjian2" @errorhandle="handleError">
+                      </vue-core-image-upload>
+                  </div>
+                </el-form-item>
+                <!-- <div>
                   <vue-core-image-upload :crop="false" inputOfFile="imageFile" :url="upload" extensions="png,gif,jpeg,jpg" :class="['el-button', 'el-button--primary']" :max-file-size="5242880" :data="imageData" text="上传图片" :multiple="true" :multiple-size="30" credentials="true"
                     @imageuploaded="imageuploaded" @errorhandle="handleError">
                   </vue-core-image-upload>
-                </div>
+                </div> -->
               </el-form-item>
               <!-- <el-form-item label="税 号：" prop="unitShuiHao">
                 <el-input v-model="kaiPiao.unitShuiHao"></el-input>
@@ -800,6 +819,7 @@ export default {
   data() {
     return {
       wen_jian_url:'',
+      wen_jian_url_2:'',
       upload:'',
       wenjianData: {
           userId: '',
@@ -861,35 +881,11 @@ export default {
       yuBaoJiaInfo: {},
       // 上部分
       rules: {
-        projectName: [{
+        jinE: [{
             required: true,
-            message: '请输入项目名称',
+            message: '请输开票金额',
             trigger: 'blur'
           },
-          {
-            min: 1,
-            max: 255,
-            message: '长度在 1 到 255 个字符',
-            trigger: 'blur'
-          }
-        ],
-        unitId: [{
-            required: true,
-            message: '请选择客户单位',
-            trigger: 'blur'
-          }
-        ],
-        cilentCompanyName: [{
-            required: true,
-            message: '请输入客户单位',
-            trigger: 'blur'
-          },
-          {
-            min: 1,
-            max: 255,
-            message: '长度在 1 到 255 个字符',
-            trigger: 'blur'
-          }
         ]
       }
     }
@@ -949,6 +945,14 @@ export default {
         self.imageUrls = urls;
       }
     },
+    imageupwenjian2(data) {
+      this.$message.success("上传成功");
+      let urls = [];
+      urls = data.url;
+      if(urls != 'undefinded' && urls.length > 0 ){
+        this.wen_jian_url_2 = urls[0];
+      }
+    },
     imageupwenjian(data) {
       this.$message.success("上传成功");
       let urls = [];
@@ -1004,9 +1008,11 @@ export default {
         projectName: '',
         addUserId: '',
         addUserName: '',
-        wenJianUrl:''
+        wenJianUrl:'',
+        ziLiaoUrl:'',
       };
       this.wen_jian_url = "";
+      this.wen_jian_url_2 = "";
       self.imageUrls = [];
       self.itemKaiPiao = item;
     },
@@ -1014,6 +1020,10 @@ export default {
       let self = this;
       let parmas = {}
       parmas = this.kaiPiao;
+      if (this.kaiPiao.jinE == 'undefined' || this.kaiPiao.jinE == '') {
+        this.$message.error("请填写金额");
+        return;
+      }
       if(this.kaiPiao.jinE > this.itemKaiPiao.needKaiPiao){
         this.$message.error("开票金额有误")
         return;
@@ -1032,6 +1042,7 @@ export default {
       parmas.addUserId = this.uid;
       parmas.addUserName = this.name;
       parmas.wenJianUrl = this.wen_jian_url;
+      parmas.ziLiaoUrl = this.wen_jian_url_2;
 
       parmas.financeBiLi = self.itemKaiPiao.financeBiLi;
       parmas.financeJinE = self.itemKaiPiao.financeJinE;

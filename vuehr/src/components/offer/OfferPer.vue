@@ -17,6 +17,11 @@
       <el-main style="padding-left: 0px;padding-top: 0px;margin-top:20px;">
         <div>
           <el-table :data="tableData" stripe  v-loading="tableLoading" style="width: 100%">
+            <el-table-column label="项目" prop="projectName">
+              <template slot-scope="scope">
+                {{scope.row.project.projectName}}
+              </template>
+            </el-table-column>
             <el-table-column label="客户单位" prop="clientCompanyName">
             </el-table-column>
             <el-table-column label="车型" prop="carType">

@@ -41,26 +41,26 @@
                   <el-input v-model="ruleForm.carType" :disabled="ruleForm.audit+''!=='2'"></el-input>
                 </el-form-item>
                 <el-form-item v-if="ruleForm.submitType+''==='1'" label="不含税总价：" prop="tax">
-                  <el-input-number v-model="ruleForm.noTaxTotal" controls-position="right" :min="0" :disabled="ruleForm.audit+''!=='2'"></el-input-number>
+                  <el-input-number v-model="ruleForm.noTaxTotal"  @blur="toChange" controls-position="right" :min="0" :disabled="ruleForm.audit+''==='1'"></el-input-number>
                 </el-form-item>
                 <el-form-item label="税率：" prop="tax">
-                  <el-input-number v-model="ruleForm.tax" controls-position="right" :min="0" :disabled="ruleForm.audit+''!=='2'"></el-input-number>
+                  <el-input-number v-model="ruleForm.tax" controls-position="right" :min="0" :disabled="true"></el-input-number>
                 </el-form-item>
-                <el-form-item v-if="ruleForm.submitType+''==='1'" label="含税总价：" prop="tax">
-                  <el-input-number v-model="ruleForm.total" controls-position="right" :min="0" :disabled="ruleForm.audit+''!=='2'"></el-input-number>
+                <el-form-item  v-if="ruleForm.submitType+''==='1'" label="含税总价：" prop="tax">
+                  <el-input-number v-model="ruleForm.total"  @blur="toChange1" controls-position="right" :min="0" :disabled="ruleForm.audit+''==='1'" ></el-input-number>
                 </el-form-item>
                 <el-form-item  label="最终优惠价格：" prop="finalBaoJia">
                   <el-input-number v-model="ruleForm.finalBaoJia" controls-position="right" :min="0" :disabled="true"></el-input-number>
                 </el-form-item>
-                <el-form-item label="备注：" prop="remark">
-                  <el-input type="textarea" v-model="ruleForm.remark" :disabled="ruleForm.audit+''!=='2'"></el-input>
+                <el-form-item  label="备注："   prop="remark">
+                  <el-input type="textarea" v-model="ruleForm.remark" :disabled="ruleForm.audit+''==='1'"></el-input>
                 </el-form-item>
-                <el-form-item v-if="ruleForm.submitType+''==='1'" label="下载原文件" prop="remark">
+                <el-form-item v-if="ruleForm.submitType+''==='1'"label="下载原文件" prop="remark">
                 <template >
                   <a :href="ruleForm.fuJianUrl" download="w3logo" style="color:blue;">下载原文件</a>
             </template>
                 </el-form-item>
-                <el-form-item   v-if="ruleForm.submitType+''==='1' && ruleForm.audit+''==='2'" label="重新上传文件：" >
+                <el-form-item   v-if="ruleForm.submitType+''==='1' && ruleForm.audit+''!=='1'" label="重新上传文件：" >
                   <div v-show="wen_jian_url !== ''">
                     <p style="color: blue;">上传成功</p>
                   </div>
@@ -89,7 +89,7 @@
             <div slot="header" class="clearfix">
               <span>产品列表</span>
               <div class="card-bottom" style="float: right;">
-                <el-button v-if="ruleForm.audit+''==='2'" type="primary" class="el-icon-plus" @click="toadd">添加</el-button>
+                <el-button v-if="ruleForm.audit+''!=='1'" type="primary" class="el-icon-plus" @click="toadd">添加</el-button>
               </div>
             </div>
             <div>
@@ -120,8 +120,8 @@
                 </el-table-column>
                 <el-table-column fixed="right" label="操作" width="300">
                   <template slot-scope="scope">
-                    <el-button v-if="ruleForm.audit+''==='2'" type="text" size="small" @click.native.prevent="toEidtor(scope.$index, productData)">编辑</el-button>
-                    <el-button v-if="ruleForm.audit+''==='2'"
+                    <el-button v-if="ruleForm.audit+''!=='1'" type="text" size="small" @click.native.prevent="toEidtor(scope.$index, productData)">编辑</el-button>
+                    <el-button v-if="ruleForm.audit+''!=='1'"
                       @click.native.prevent="deleteRow(scope.$index, productData)"
                       type="text"
                       size="small">
@@ -133,10 +133,11 @@
             </div>
           </el-card>
         </div>
-        <div class="card-bottom" style="float: left;margin-top:10px;">
+        <div  v-if="ruleForm.audit+''==='1'" class="card-bottom" style="float: left;margin-top:10px;">
           <el-button type="primary" @click="toback">返回列表</el-button>
         </div>
-        <div v-if="ruleForm.audit+''==='2'" style="margin-top:20px;margin-bottom:20px;">
+        <!-- <div v-if="ruleForm.audit+''==='2'" style="margin-top:20px;margin-bottom:20px;"> -->
+          <div v-if="ruleForm.audit+''!=='1'" style="margin-top:20px;margin-bottom:20px;">
           <div class="card-bottom" style="float: right;">
             <el-button type="danger" @click="toAgain">重新提交</el-button>
           </div>
@@ -163,9 +164,15 @@
               <el-form-item label="系数：" prop="coefficient">
                 <el-input v-model="elform.coefficient" style="width:30%;" placeholder="请输入产品系数"></el-input>
               </el-form-item>
-              <el-form-item label="单价：" prop="price">
-                <el-input-number v-model="elform.price" controls-position="right" :min="0"></el-input-number>
+              <el-form-item label="含税总价：" prop="total">
+                <el-input-number v-model="elform.total" @blur="toChange3" controls-position="right" :min="0"></el-input-number>
               </el-form-item>
+              <el-form-item label="不含税总价：" prop="noTaxPrice">
+                <el-input-number v-model="elform.noTaxPrice" @blur="toChange2" controls-position="right" :min="0"></el-input-number>
+              </el-form-item>
+              <!-- <el-form-item label="单价：" prop="price">
+                <el-input-number v-model="elform.price" controls-position="right" :min="0"></el-input-number>
+              </el-form-item> -->
               <el-form-item label="上传图片：">
                 <div>
                   <vue-core-image-upload :crop="false" inputOfFile="imageFile" :url="upload" extensions="png,gif,jpeg,jpg" :class="['el-button', 'el-button--primary']" :max-file-size="5242880" :data="imageData" text="上传图片" :multiple="true" :multiple-size="30" credentials="true"
@@ -358,6 +365,26 @@ export default {
     toDownLoad(url){
       window.open(url);
     },
+    toChange(){
+      var total = 0;
+      total = this.ruleForm.noTaxTotal * (100+this.ruleForm.tax)/100;
+      this.ruleForm.total = total.toFixed(2)
+    },
+    toChange1(){
+      var total = 0;
+      total = this.ruleForm.total / (100+this.ruleForm.tax) * 100;
+      this.ruleForm.noTaxTotal = total.toFixed(2)
+    },
+    toChange3(){
+      var total = 0;
+      total = this.elform.total / (100+this.ruleForm.tax) * 100;
+      this.elform.noTaxPrice = total.toFixed(2)
+    },
+    toChange2(){
+      var total = 0;
+      total = this.elform.noTaxPrice * (100+this.ruleForm.tax)/100;
+      this.elform.total = total.toFixed(2)
+    },
     toimageupwenjian(data){
       this.$confirm('此操作将覆盖原上传文件, 是否继续?', '提示', {
         confirmButtonText: '确定',
@@ -399,6 +426,7 @@ export default {
         dongMo: false
       };
       this.imageUrls = [];
+      this.udapteBoolean = false;
     },
     commit() {
       let self = this;
@@ -483,6 +511,8 @@ export default {
         if (resp && resp.status == 200 && resp.data.code == 0) {
           this.$message.success("删除成功");
           rows.splice(index, 1);
+          // 刷新页面
+          this.getInfo(this.urlId);
         } else {
           self.$message.error("删除失败");
         }
@@ -573,9 +603,11 @@ export default {
     },
     toAddProduct() {
       let self = this;
-      let total = self.elform.price * self.elform.productNum * (self.ruleForm.tax / 100 + 1);
+      // let total = self.elform.price * self.elform.productNum * (self.ruleForm.tax / 100 + 1);
       var te = this.$options.filters['imageFilter'];
       let url = te(self.imageUrls)
+      var xe = this.$options.filters['toDecimal'];
+      var itempirce = self.elform.total/self.elform.productNum;
       let product = {
         yuBaoJiaId: self.ruleForm.id,
         productName: self.elform.productName,
@@ -584,11 +616,11 @@ export default {
         area: self.elform.area,
         dongMo: self.elform.dongMo,
         coefficient: self.elform.coefficient,
-        price: self.elform.price,
+        price: xe(itempirce/self.elform.area),
         picUrls: url,
         tax: self.ruleForm.tax,
-        noTaxPrice: self.elform.price * self.elform.productNum,
-        total: total,
+        noTaxPrice: self.elform.noTaxPrice,
+        total: self.elform.total,
         immutable: false,
         addUserId: this.uid,
         addUserName: this.name
@@ -601,6 +633,8 @@ export default {
             self.imageUrls = [];
             self.resetForm('elform');
             self.innerVisible = false;
+            // 重新获取
+            this.getInfo(this.urlId);
         } else {
           self.$message.error("新增失败");
         }
@@ -647,9 +681,11 @@ export default {
     },
     toUpdateProduct(){
       let self = this;
-      let total = self.elform.price * self.elform.productNum * (self.ruleForm.tax / 100 + 1);
+      // let total = self.elform.price * self.elform.productNum * (self.ruleForm.tax / 100 + 1);
       var te = this.$options.filters['imageFilter'];
+      var xe = this.$options.filters['toDecimal'];
       let url = te(self.imageUrls)
+      var itempirce = self.elform.total/self.elform.productNum;
       let product = {
         yuBaoJiaId:self.ruleForm.id,
         id:self.elform.id,
@@ -659,18 +695,20 @@ export default {
         area: self.elform.area,
         dongMo: self.elform.dongMo,
         coefficient: self.elform.coefficient,
-        price: self.elform.price,
+        price: xe(itempirce/self.elform.area),
         picUrls: url,
         tax: self.ruleForm.tax,
-        noTaxPrice: self.elform.price * self.elform.productNum,
-        total: total,
+        noTaxPrice: self.elform.noTaxPrice,
+        total: self.elform.total,
         immutable: false,
         addUserId: this.uid,
         addUserName: this.name
       }
+      // console.log(product);
+      // return;
       this.postRequest("/offer/bus/update/product", product).then(resp => {
         if (resp && resp.status == 200 && resp.data.code == 0) {
-            self.$message.success("更新成功");
+            self.$message.success("成功");
             let newData = [];
             product.picUrls = self.imageUrls
             for(let i = 0; i< this.productData.length; i++){
@@ -687,7 +725,7 @@ export default {
             self.resetForm('elform');
             self.innerVisible = false;
         } else {
-          self.$message.error("更新失败");
+          self.$message.error("失败");
         }
       })
     },

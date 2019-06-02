@@ -73,6 +73,10 @@
               size="mini"
               type="warning"
               @click="toinfo(scope.row.id)">详情</el-button>
+              <el-button
+                size="mini"
+                type="danger"
+                @click="toBack(scope.row.id)">重置</el-button>
           </template>
           </el-table-column>
         </el-table>
@@ -195,6 +199,34 @@ export default {
     }
   },
   methods: {
+    toBack(id) {
+      this.$confirm('此操作将订单恢复到重新分配状态, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.toGoBack(id);
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        });
+      });
+    },
+    toGoBack(id) {
+      let params = {
+        orderId : id,
+        userId : this.uid
+      }
+      this.postRequest("/plant/back", params).then(resp => {
+        if (resp && resp.status == 200 && resp.data.code == 0) {
+          this.$message.success("操作成功");
+          this.getCollectMouldList();
+        } else {
+          this.$message.error("操作失败")
+        }
+      });
+    },
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },

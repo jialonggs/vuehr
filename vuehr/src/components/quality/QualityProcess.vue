@@ -383,6 +383,7 @@ export default {
         if (resp && resp.status == 200 && resp.data.code == 0) {
           self.$message.success("精封结算成功");
           this.getCollectMouldList();
+          this.getAllCollectMouldList();
           this.quxiao();
         } else {
           self.$message.error("精封结算失败");
@@ -409,11 +410,14 @@ export default {
         orderName: this.itemTiaoZhen.order.orderName,
         addUserId: this.uid,
         addUserName: this.name,
+
         ygas: this.Ygas,
       }
+      console.log(params);
       this.jsonPostRequest("/quality/jie/jingfeng", params).then(resp => {
         if (resp && resp.status == 200 && resp.data.code == 0) {
-          self.$message.success("精封结算成功")
+          self.$message.success("精封结算成功");
+          this.getCollectMouldList();
           this.quxiao();
           // this.$router.push('/plant/new/order')
         } else {

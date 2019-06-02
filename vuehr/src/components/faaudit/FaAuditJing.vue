@@ -186,11 +186,11 @@
         </el-form-item>
         <el-form-item label="付款金额：">
           <!-- <el-input  v-model="form.order.financeJinE" :disabled="true"></el-input> -->
-          <span>{{form.order.financeJinE}}</span>
+          <span>{{form.order.project.financeJinE}}</span>
         </el-form-item>
         <el-form-item label="付款比例：">
           <!-- <el-input  v-model="form.order." :disabled="true"></el-input> -->
-          <span>{{form.order.financeBiLi}}</span>
+          <span>{{form.order.project.financeBiLi}}%</span>
         </el-form-item>
         <el-form-item label="欠款原因：">
           <el-input type="textarea" v-model="form.faMoRemark" :disabled="true"></el-input>
@@ -226,7 +226,9 @@ export default {
     return {
       dialogFormVisible: false,
       form:{
-        order:{}
+        order:{
+          project:{}
+        }
       },
       auditItem:"",
       activeName: 'first',
