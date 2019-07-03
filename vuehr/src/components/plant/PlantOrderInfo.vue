@@ -833,7 +833,14 @@ export default {
         tiaoZheng: '待添加',
         remark: '待添加'
       },
-      itemOrder: {},
+      itemOrder: {
+        project:{
+          projectName:""
+        },
+        processUnit:{
+          clientCompanyName:""
+        }
+      },
       itemYga: {},
       Ygas: [],
       outerVisible: false,
@@ -1260,19 +1267,7 @@ export default {
           this.techId = resp.data.data.orderinfo.techId;
           let techCardList = resp.data.data.orderinfo.techCardList;
           this.lanMoList = resp.data.data.orderinfo.lanMoList;
-          console.log(this.lanMoList);
-          // if (techCardList !== '' && techCardList.length > 0) {
-          //   for (var i = 0; i < techCardList.length; i++) {
-          //     let lanlist = techCardList[i].lanMoList;
-          //     if (lanlist !== '' && lanlist.length > 0) {
-          //       for (var y = 0; y < lanlist.length; y++) {
-          //         lanlist[y].techName = techCardList[i].piWenDaiMa;
-          //         lanMoList.push(lanlist[y]);
-          //       }
-          //     }
-          //   }
-          // }
-          this.lanMoList = lanMoList;
+
           this.qrCode = resp.data.data.orderinfo.qrCode;
           this.exform = resp.data.data.orderinfo.controlOrderFrom;
           let moulds = resp.data.data.orderinfo.mouldInfoList;

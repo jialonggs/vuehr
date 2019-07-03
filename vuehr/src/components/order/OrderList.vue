@@ -19,7 +19,7 @@
         <div class="handle-box">
           <el-row :gutter="10">
             <el-col :span="6">
-                主机厂：<el-select v-model="select_engine" clearable  placeholder="请选择主机厂">
+                主机厂：<el-select v-model="select_engine" filterable  placeholder="请选择主机厂">
                       <el-option
                         v-for="item in Engineoptions"
                         :key="item.id"
@@ -30,7 +30,7 @@
             </el-col>
             <el-col :span="6"><div class="grid-content bg-purple">
                   车型：
-                  <el-select v-model="select_car" clearable  placeholder="请选择车型">
+                  <el-select v-model="select_car" filterable  placeholder="请选择车型">
                        <el-option
                          v-for="item in allCars"
                          :key="item.id"
@@ -40,7 +40,7 @@
                      </el-select>
             </div></el-col>
             <el-col :span="6"><div class="grid-content bg-purple">
-                  单位：<el-select v-model="select_unit" clearable  placeholder="请选择客户单位">
+                  单位：<el-select v-model="select_unit" filterable  placeholder="请选择客户单位">
                         <el-option
                           v-for="item in allUnit"
                           :key="item.id"
@@ -50,7 +50,7 @@
                       </el-select>
             </div></el-col>
             <el-col :span="6"><div class="grid-content bg-purple">
-                  项目： <el-select v-model="select_project" clearable  placeholder="请选择项目">
+                  项目： <el-select v-model="select_project" filterable  placeholder="请选择项目">
                         <el-option
                           v-for="item in allProject"
                           :key="item.id"
@@ -59,7 +59,16 @@
                         </el-option>
                       </el-select>
             </div></el-col>
+
           </el-row>
+        </div>
+        <div class="demo-input-suffix">
+          <p style="float:left">产品名称：</p>
+          <el-input
+            placeholder="请填写产品名称"
+            style="float:left;width:10%"
+            v-model="select_order_name">
+          </el-input>
         </div>
         <div class="handle-box">
           <el-button type="primary" icon="el-icon-search" @click="selectAll()">搜索</el-button>
@@ -151,6 +160,7 @@
 export default {
   data() {
     return {
+      select_order_name:"",
       select_engine:'',
       select_car:'',
       select_project:'',
@@ -159,6 +169,7 @@ export default {
       Engineoptions:[],
       allCars:[],
       allProject:[],
+  
 
       nowTab: 1,
       username: '',
@@ -266,6 +277,9 @@ export default {
       }
       if(this.select_project !== '' && this.select_project!== 'undefined'){
         select = select + "&projectId=" + this.select_project
+      }
+      if(this.select_order_name !== '' && this.select_order_name!== 'undefined'){
+        select = select + "&orderName=" + this.select_order_name
       }
 
       this.getRequest("/order/list/by/condition?addUserId=" + this.uid +"&page=" + this.currentPage +"&size=" + this.pagesize + select).then(resp => {

@@ -9,11 +9,27 @@
       </el-breadcrumb>
     </div>
     <el-container>
-      <el-header style="padding: 0px;display:flex;justify-content:space-between;align-items: center;margin-top:20px;">
+      <el-card class="box-card" shadow="never" style="margin-top:10px">
         <div class="handle-box">
-          <!-- <el-button type="primary" icon="plus" class="mr10" @click="toadd">创建订单</el-button> -->
-          <el-input v-model="select_word" placeholder="筛选关键词" class="handle-input mr10" icon="search"></el-input>
+          <el-row :gutter="10">
+            <el-col :span="6"><div class="grid-content bg-purple">
+                  单位：<el-select v-model="select_unit" filterable  placeholder="请选择客户单位">
+                        <el-option
+                          v-for="item in allUnit"
+                          :key="item.id"
+                          :label="item.clientCompanyName"
+                          :value="item.id">
+                        </el-option>
+                      </el-select>
+            </div></el-col>
+
+          </el-row>
         </div>
+        <div class="handle-box">
+          <el-button type="primary" icon="el-icon-search" @click="selectAll()">搜索</el-button>
+        </div>
+      </el-card>
+      <el-header style="padding: 0px;display:flex;justify-content:space-between;align-items: center;margin-top:5px;">
       </el-header>
       <el-main style="padding-left: 0px;padding-top: 0px">
         <el-table :data="tableData" stripe style="width: 100%" v-loading="tableLoading">
@@ -113,7 +129,9 @@ export default {
       nowTab: 1,
       username: '',
       name: '',
+      select_unit:'',
       uid: '',
+      allUnit:[],
       tableLoading: false,
       currentPage: 1,
       totalnum: 0,
@@ -146,6 +164,37 @@ export default {
     }
   },
   methods: {
+    loadAllUnit() {
+      let self = this
+      this.getRequest("/unit/all").then(resp => {
+        if (resp && resp.status == 200 && resp.data.code == 0) {
+          let re = resp.data.data.unitlist;
+          if (re != 'undefined' && re.length > 0) {
+            self.allUnit = re;
+          }
+        } else {
+          console.log("获取列表数据失败");
+        }
+      });
+    },
+    selectAll() {
+      let _this = this
+      let select = "";
+
+      if(this.select_unit !== '' && this.select_unit!== 'undefined'){
+        select = select + "&unitId=" + this.select_unit
+      }
+      // _this.tableLoading = false;
+      this.getRequest("/finance/auth/listbypage?page=" + this.currentPage +"&size=" + this.pagesize + select).then(resp => {
+        _this.tableLoading = false;
+        if (resp && resp.status == 200 && resp.data.code == 0) {
+          _this.tableData = resp.data.data.putorderlist
+          _this.totalnum = resp.data.data.count
+        } else {
+          console.log("获取列表数据失败");
+        }
+      });
+    },
     toBiLi(){
       let shiFu = this.form.financeJinE
       if(shiFu!== '' && shiFu !=='undefined'){
@@ -241,11 +290,13 @@ export default {
     // 重置
     handleSizeChange(val) {
       this.pagesize = val;
-      this.getCollectMouldList();
+      //this.getCollectMouldList();
+      this.selectAll();
     },
     handleCurrentChange(val) {
       this.currentPage = val;
-      this.getCollectMouldList();
+      this.selectAll();
+      // this.getCollectMouldList();
     },
     // 获取订单列表
     getCollectMouldList() {
@@ -262,7 +313,9 @@ export default {
   mounted: function() {
     this.$nextTick(function() {
       this.tableLoading = true;
-      this.getCollectMouldList();
+      //this.getCollectMouldList();
+      this.loadAllUnit();
+      this.selectAll();
     })
     this.username = localStorage.getItem('cp_username');
     this.uid = localStorage.getItem('cp_uid');

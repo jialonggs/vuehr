@@ -12,9 +12,46 @@
       <el-header style="padding: 0px;display:flex;justify-content:space-between;align-items: center;margin-top:20px;">
         <div class="handle-box">
           <!-- <el-button type="primary" icon="plus" class="mr10" @click="toadd">创建订单</el-button> -->
-          <el-input v-model="select_word" placeholder="筛选关键词" class="handle-input mr10" icon="search"></el-input>
+          <!-- <el-input v-model="select_word" placeholder="筛选关键词" class="handle-input mr10" icon="search"></el-input> -->
         </div>
       </el-header>
+      <el-card class="box-card" shadow="never">
+        <div class="handle-box">
+          <el-row :gutter="10">
+            <el-col :span="6"><div class="grid-content bg-purple">
+                  单位：<el-select v-model="select_unit" filterable  placeholder="请选择客户单位">
+                        <el-option
+                          v-for="item in allUnit"
+                          :key="item.id"
+                          :label="item.clientCompanyName"
+                          :value="item.id">
+                        </el-option>
+                      </el-select>
+            </div></el-col>
+            <el-col :span="6"><div class="grid-content bg-purple">
+                  项目： <el-select v-model="select_project" filterable  placeholder="请选择项目">
+                        <el-option
+                          v-for="item in allProject"
+                          :key="item.id"
+                          :label="item.projectName"
+                          :value="item.id">
+                        </el-option>
+                      </el-select>
+            </div></el-col>
+            <el-col :span="6"><div class="grid-content bg-purple">
+                  产品名称： <el-input
+                    placeholder="请填写产品名称"
+                    style="width:50%"
+                    v-model="select_order_name">
+                  </el-input>
+            </div></el-col>
+          </el-row>
+        </div>
+
+        <div class="handle-box">
+          <el-button type="primary" icon="el-icon-search" @click="selectAll()">搜索</el-button>
+        </div>
+      </el-card>
       <el-main style="padding-left: 0px;padding-top: 0px">
         <el-table :data="data" stripe style="width: 100%" v-loading="tableLoading">
           <el-table-column label="产品名称" prop="orderName">
@@ -179,6 +216,11 @@ export default {
       itemYga: {},
       cxFenPei: true,
       Ygas: [],
+      allUnit:[],
+      allProject:[],
+      select_project:'',
+      select_unit:'',
+      select_order_name:'',
       restaurants4: [],
       form: {
         biLi: '',
@@ -403,11 +445,62 @@ export default {
     // 重置
     handleSizeChange(val) {
       this.pagesize = val;
-      this.getCollectMouldList();
+      this.selectAll();
+      //this.getCollectMouldList();
     },
     handleCurrentChange(val) {
       this.currentPage = val;
-      this.getCollectMouldList();
+      this.selectAll();
+      //this.getCollectMouldList();
+    },
+    selectAll() {
+      let _this = this
+      let select = "";
+      if(this.select_unit !== '' && this.select_unit!== 'undefined'){
+        select = select + "&unitId=" + this.select_unit
+      }
+      if(this.select_project !== '' && this.select_project!== 'undefined'){
+        select = select + "&projectId=" + this.select_project
+      }
+      if(this.select_order_name !== '' && this.select_order_name!== 'undefined'){
+        select = select + "&orderName=" + this.select_order_name
+      }
+
+      this.getRequest("/plant/new/order/condition?userId=" + this.uid +"&plantStatus=1&page=" + this.currentPage +"&size=" + this.pagesize + select).then(resp => {
+          _this.tableLoading = false;
+        if (resp && resp.status == 200 && resp.data.code == 0) {
+          _this.tableData = resp.data.data.orderlist
+          _this.totalnum = resp.data.data.count
+        } else {
+          console.log("获取列表数据失败");
+        }
+      });
+    },
+    loadAllProject() {
+      let self = this
+      this.getRequest("/project/list/byuid?uid=" + this.uid).then(resp => {
+        if (resp && resp.status == 200 && resp.data.code == 0) {
+          let re = resp.data.data.projectlist;
+          if (re != 'undefined' && re.length > 0) {
+            self.allProject = re;
+          }
+        } else {
+          console.log("获取列表数据失败");
+        }
+      });
+    },
+    loadAllUnit() {
+      let self = this
+      this.getRequest("/unit/all").then(resp => {
+        if (resp && resp.status == 200 && resp.data.code == 0) {
+          let re = resp.data.data.unitlist;
+          if (re != 'undefined' && re.length > 0) {
+            self.allUnit = re;
+          }
+        } else {
+          console.log("获取列表数据失败");
+        }
+      });
     },
     // 获取订单列表
     getCollectMouldList() {
@@ -426,7 +519,10 @@ export default {
   mounted: function() {
     this.$nextTick(function() {
       this.tableLoading = true;
-      this.getCollectMouldList();
+      this.selectAll();
+      // this.getCollectMouldList();
+      this.loadAllUnit();
+      this.loadAllProject();
     })
     this.username = localStorage.getItem('cp_username');
     this.uid = localStorage.getItem('cp_uid');

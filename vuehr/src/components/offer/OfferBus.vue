@@ -66,6 +66,8 @@
             <span>{{scope.row.createTime | formatDateTime}}</span>
           </template>
             </el-table-column>
+            <el-table-column label="审核人" prop="auditName">
+            </el-table-column>
             <el-table-column align="center" label="操作" width="280">
               <template slot-scope="scope">
           <el-button

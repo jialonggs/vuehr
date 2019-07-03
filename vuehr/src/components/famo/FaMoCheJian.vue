@@ -46,6 +46,10 @@
           <el-table-column label="创建时间" prop="createTime">
             <template slot-scope="scope">{{ scope.row.createTime | formatDateTime}}</template>
           </el-table-column>
+          <el-table-column label="商务审核" prop="auditName">
+          </el-table-column>
+          <el-table-column label="经理审核" prop="auditJingName">
+          </el-table-column>
           <el-table-column label="操作">
             <template slot-scope="scope">
             <el-button v-if="scope.row.cheJian+'' === ''"

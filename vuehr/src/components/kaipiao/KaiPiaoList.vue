@@ -125,6 +125,14 @@
                 <span>{{scope.row.createTime | formatDateTime}}</span>
               </template>
                 </el-table-column>
+                <el-table-column label="文员" prop="auditName">
+                </el-table-column>
+                <el-table-column label="商务" prop="auditShangName">
+                </el-table-column>
+                <el-table-column label="财务" prop="auditFinanceName">
+                </el-table-column>
+                <el-table-column label="经理" prop="auditJingName">
+                </el-table-column>
                 <!-- <el-table-column align="center" label="操作">
                   <template slot-scope="scope">
               <el-button
@@ -187,6 +195,14 @@
                   <template slot-scope="scope">
                 <span>{{scope.row.createTime | formatDateTime}}</span>
               </template>
+                </el-table-column>
+                <el-table-column label="文员" prop="auditName">
+                </el-table-column>
+                <el-table-column label="商务" prop="auditShangName">
+                </el-table-column>
+                <el-table-column label="财务" prop="auditFinanceName">
+                </el-table-column>
+                <el-table-column label="经理" prop="auditJingName">
                 </el-table-column>
                 <!-- <el-table-column align="center" label="操作">
                   <template slot-scope="scope">
